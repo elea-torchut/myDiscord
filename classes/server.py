@@ -7,7 +7,7 @@ from channel import db as channel_db, Channel
 app = Flask(__name__)
 
 # Configuration de la base de données MySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/mydiscord'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/my_discord'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialiser l'extension SQLAlchemy pour le modèle User

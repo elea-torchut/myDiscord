@@ -14,3 +14,4 @@ class Message(db.Model):
     author = db.relationship('User', backref=db.backref('messages', lazy=True))
     channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
     channel = db.relationship('Channel', backref=db.backref('messages', lazy=True))
+
