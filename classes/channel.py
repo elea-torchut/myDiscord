@@ -49,7 +49,7 @@ class ChannelManager(tk.Tk):
         self.message_listbox = tk.Listbox(self.message_frame, width=50)
         self.message_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.load_messages()
+        #self.load_messages()
 
         # Chargement initial des canaux
         self.refresh_channels()
@@ -99,18 +99,18 @@ class ChannelManager(tk.Tk):
         save_button.pack()
 
 
-    def load_messages(self):
-        # Efface la liste actuelle des messages
-        self.message_listbox.delete(0, tk.END)
+    # def load_messages(self):
+    # # Efface la liste actuelle des messages
+    #     self.message_listbox.delete(0, tk.END)
 
-        # Charge les messages du canal sélectionné depuis la base de données
-        selected_channel = self.channel_listbox.get(tk.ACTIVE)
-        self.cursor.execute("SELECT message FROM messages WHERE channel=?", (selected_channel,))
-        messages = self.cursor.fetchall()
+    # # Charge les messages du canal sélectionné depuis la base de données
+    #     selected_channel = self.channel_listbox.get(tk.ACTIVE)
+    #     self.cursor.execute("SELECT message FROM messages WHERE channel=%s", (selected_channel,))
+    #     messages = self.cursor.fetchall()
 
-        # Affiche les messages dans la liste
-        for message in messages:
-            self.message_listbox.insert(tk.END, message[0])
+    # # Affiche les messages dans la liste
+    #     for message in messages:
+    #         self.message_listbox.insert(tk.END, message[0])
 
 
 if __name__ == "__main__":
