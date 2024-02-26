@@ -6,40 +6,64 @@ class ChatApplication(tk.Tk):
     def __init__(self):
         super().__init__()
 
+        # Calcul des dimensions de la fenêtre
+        window_width = 800
+        window_height = 600
+
+        # Obtention des dimensions de l'écran
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        # Calcul des coordonnées pour centrer la fenêtre
+        x = (screen_width - window_width) // 2
+        y = (screen_height - window_height) // 2
+
+        # Configuration de la taille et de la position de la fenêtre
+        self.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
         self.title("Chat Discord")
 
+        # Cadre principal pour contenir les éléments
+        main_frame = tk.Frame(self)
+        main_frame.pack(expand=True, fill=tk.BOTH)
+
+        # Titre à l'intérieur de la fenêtre
+        title_label = tk.Label(main_frame, text="Bienvenue sur Chat Discord", font=("Arial", 20))
+        title_label.grid(row=0, column=0, columnspan=2, pady=20, padx=(175,10))
+
         # Création des labels et des champs de saisie pour les informations de connexion
-        self.label_email = tk.Label(self, text="Email:")
-        self.entry_email = tk.Entry(self)
+        self.label_email = tk.Label(main_frame, text="Email:")
+        self.entry_email = tk.Entry(main_frame, width=50)
         
-        self.label_prenom = tk.Label(self, text="Prénom:")
-        self.entry_prenom = tk.Entry(self)
+        self.label_prenom = tk.Label(main_frame, text="Prénom:")
+        self.entry_prenom = tk.Entry(main_frame, width=50)
 
-        self.label_nom = tk.Label(self, text="Nom:")
-        self.entry_nom = tk.Entry(self)
+        self.label_nom = tk.Label(main_frame, text="Nom:")
+        self.entry_nom = tk.Entry(main_frame, width=50)
 
-        self.label_mot_de_passe = tk.Label(self, text="Mot de passe:")
-        self.entry_mot_de_passe = tk.Entry(self, show="*")
+        self.label_mot_de_passe = tk.Label(main_frame, text="Mot de passe:")
+        self.entry_mot_de_passe = tk.Entry(main_frame, show="*", width=50)
 
         # Création des boutons de connexion et d'inscription
-        self.button_connexion = tk.Button(self, text="Se connecter", command=self.connexion_utilisateur)
-        self.button_inscription = tk.Button(self, text="S'inscrire", command=self.inscrire_utilisateur)
+        self.button_connexion = tk.Button(main_frame, text="Se connecter", command=self.connexion_utilisateur, width=20)
+        self.button_inscription = tk.Button(main_frame, text="S'inscrire", command=self.inscrire_utilisateur, width=20)
 
-        # Placement des widgets dans la fenêtre
-        self.label_email.grid(row=0, column=0, sticky="e")
-        self.entry_email.grid(row=0, column=1)
+        # Placement des widgets dans le cadre principal
+        self.label_email.grid(row=0, column=0, pady=(200,10), padx=150)
+        self.entry_email.grid(row=0, column=1, pady=(200,10))
         
-        self.label_prenom.grid(row=1, column=0, sticky="e")
-        self.entry_prenom.grid(row=1, column=1)
+        self.label_prenom.grid(row=1, column=0, pady=10)
+        self.entry_prenom.grid(row=1, column=1, pady=10)
 
-        self.label_nom.grid(row=2, column=0, sticky="e")
-        self.entry_nom.grid(row=2, column=1)
+        self.label_nom.grid(row=2, column=0, pady=10)
+        self.entry_nom.grid(row=2, column=1, pady=10)
 
-        self.label_mot_de_passe.grid(row=3, column=0, sticky="e")
-        self.entry_mot_de_passe.grid(row=3, column=1)
+        self.label_mot_de_passe.grid(row=3, column=0, pady=10)
+        self.entry_mot_de_passe.grid(row=3, column=1, pady=10)
 
-        self.button_connexion.grid(row=4, column=0, columnspan=2, sticky="we")
-        self.button_inscription.grid(row=5, column=0, columnspan=2, sticky="we")
+        self.button_connexion.grid(row=4, column=0, columnspan=2, pady=10)
+        self.button_inscription.grid(row=4, column=1, columnspan=2, pady=10)
+
 
     def rediriger_vers_discussion(self):
         self.destroy()
