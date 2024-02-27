@@ -1,3 +1,4 @@
+# chatapplication.py
 import tkinter as tk
 import mysql.connector
 from channel import ChannelManager

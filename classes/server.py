@@ -1,3 +1,4 @@
+# server.py
 from flask_sqlalchemy import SQLAlchemy 
 from flask import Flask, request, jsonify
 from user import db as user_db, User

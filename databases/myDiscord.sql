@@ -1,3 +1,4 @@
+myDiscord.sql
 -- Utiliser la base de données myDiscord
 USE my_discord;
 

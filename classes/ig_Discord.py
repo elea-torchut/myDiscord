@@ -1,3 +1,4 @@
+# discord.py
 import tkinter as tk
 import requests
 
