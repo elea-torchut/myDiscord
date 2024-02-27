@@ -7,7 +7,8 @@ from message import MessageManager
 if __name__ == "__main__":
     app = ChatApplication()
     app.mainloop()
-    app2 = GestionnaireCanaux()
-    app2.mainloop()
-    app3 = MessageManager
-    app3.mainloop()
+    if app.connexion_utilisateur:
+        app2 = GestionnaireCanaux()
+        app2.mainloop()
+        app3 = MessageManager()
+        app3.mainloop()
