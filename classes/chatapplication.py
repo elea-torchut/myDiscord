@@ -1,8 +1,11 @@
+#chatapplication.py
+
 import tkinter as tk
 import mysql.connector
 from channel import ChannelManager
 
 class ChatApplication(tk.Tk):
+    # Classe principale pour l'application de chat
     def __init__(self):
         super().__init__()
 
@@ -64,15 +67,16 @@ class ChatApplication(tk.Tk):
         self.button_connexion.grid(row=4, column=0, columnspan=2, pady=10)
         self.button_inscription.grid(row=4, column=1, columnspan=2, pady=10)
 
-
+    # Méthode pour rediriger l'utilisateur vers la fenêtre de discussion
     def rediriger_vers_discussion(self):
-        self.destroy()
-        channel = ChannelManager()
-        channel.mainloop()
+        self.destroy() # Fermer la fenêtre actuelle
+        channel = ChannelManager() # Créer une nouvelle fenêtre pour le chat
+        channel.mainloop() # Lancer la boucle principale de la fenêtre
 
+    # Méthode pour gérer la connexion de l'utilisateur
     def connexion_utilisateur(self):
-        email = self.entry_email.get()
-        mot_de_passe = self.entry_mot_de_passe.get()
+        email = self.entry_email.get() # Récupérer l'adresse email saisie par l'utilisateur
+        mot_de_passe = self.entry_mot_de_passe.get() # Récupérer le mot de passe saisi par l'utilisateur
 
         # Connexion à la base de données MySQL
         connection = mysql.connector.connect(
@@ -127,9 +131,6 @@ class ChatApplication(tk.Tk):
         cursor.close()
         connection.close()
 
-    def rediriger_vers_discussion(self):
-        # Ajoutez ici le code pour ouvrir une nouvelle fenêtre de discussion
-        pass
 
 if __name__ == "__main__":
     app = ChatApplication()
