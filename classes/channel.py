@@ -1,92 +1,92 @@
 import tkinter as tk
 import mysql.connector
 
-class ChannelManager(tk.Tk):
+class GestionnaireCanaux(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Gestion des canaux Discord")
         self.geometry("800x600")
 
         # Connexion à la base de données MySQL
-        self.conn = mysql.connector.connect(
+        self.connexion = mysql.connector.connect(
             host="localhost",
             user="root",
             password="123soleil",
             database="mydiscord"
         )
-        self.cursor = self.conn.cursor()
+        self.curseur = self.connexion.cursor()
         
         # Interface utilisateur
-        self.channel_frame = tk.Frame(self)
-        self.channel_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.cadre_canal = tk.Frame(self)
+        self.cadre_canal.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.message_frame = tk.Frame(self)
-        self.message_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.cadre_message = tk.Frame(self)
+        self.cadre_message.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-        self.channel_list_label = tk.Label(self.channel_frame, text="Liste des canaux")
-        self.channel_list_label.pack()
+        self.etiquette_liste_canal = tk.Label(self.cadre_canal, text="Liste des canaux")
+        self.etiquette_liste_canal.pack()
 
-        self.channel_listbox = tk.Listbox(self.channel_frame, width=30)
-        self.channel_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.liste_canal = tk.Listbox(self.cadre_canal, width=30)
+        self.liste_canal.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.refresh_button = tk.Button(self.channel_frame, text="Actualiser", command=self.refresh_channels)
-        self.refresh_button.pack()
+        self.bouton_actualiser = tk.Button(self.cadre_canal, text="Actualiser", command=self.rafraichir_canaux)
+        self.bouton_actualiser.pack()
 
-        self.create_channel_button = tk.Button(self.channel_frame, text="Créer un canal", command=self.create_channel_window)
-        self.create_channel_button.pack()
+        self.bouton_creer_canal = tk.Button(self.cadre_canal, text="Créer un canal", command=self.creer_fenetre_canal)
+        self.bouton_creer_canal.pack()
 
-        self.message_list_label = tk.Label(self.message_frame, text="Messages du canal")
-        self.message_list_label.pack()
+        self.etiquette_liste_message = tk.Label(self.cadre_message, text="Messages du canal")
+        self.etiquette_liste_message.pack()
 
-        self.message_listbox = tk.Listbox(self.message_frame, width=50)
-        self.message_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.liste_message = tk.Listbox(self.cadre_message, width=50)
+        self.liste_message.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Chargement initial des canaux
-        self.refresh_channels()
+        self.rafraichir_canaux()
 
-    def refresh_channels(self):
+    def rafraichir_canaux(self):
         # Efface la liste actuelle des canaux
-        self.channel_listbox.delete(0, tk.END)
+        self.liste_canal.delete(0, tk.END)
 
         # Récupère les canaux depuis la base de données
-        self.cursor.execute("SELECT name FROM channels")
-        channels = self.cursor.fetchall()
+        self.curseur.execute("SELECT name FROM channels")
+        canaux = self.curseur.fetchall()
 
         # Affiche les canaux dans la liste
-        for channel in channels:
-            self.channel_listbox.insert(tk.END, channel[0])
+        for canal in canaux:
+            self.liste_canal.insert(tk.END, canal[0])
 
-    def create_channel_window(self):
+    def creer_fenetre_canal(self):
         # Fenêtre pour saisir le nom et le type du canal
-        create_channel_window = tk.Toplevel(self)
-        create_channel_window.title("Créer un canal")
-        create_channel_window.geometry("300x200")
+        fenetre_creation_canal = tk.Toplevel(self)
+        fenetre_creation_canal.title("Créer un canal")
+        fenetre_creation_canal.geometry("300x200")
 
-        name_label = tk.Label(create_channel_window, text="Nom du canal:")
-        name_label.pack()
+        etiquette_nom_canal = tk.Label(fenetre_creation_canal, text="Nom du canal:")
+        etiquette_nom_canal.pack()
 
-        name_entry = tk.Entry(create_channel_window)
-        name_entry.pack()
+        saisie_nom_canal = tk.Entry(fenetre_creation_canal)
+        saisie_nom_canal.pack()
 
-        type_label = tk.Label(create_channel_window, text="Type du canal (public/privé):")
-        type_label.pack()
+        etiquette_type_canal = tk.Label(fenetre_creation_canal, text="Type du canal (public/privé):")
+        etiquette_type_canal.pack()
 
-        type_entry = tk.Entry(create_channel_window)
-        type_entry.pack()
+        saisie_type_canal = tk.Entry(fenetre_creation_canal)
+        saisie_type_canal.pack()
 
-        def save_channel():
-            name = name_entry.get()
-            channel_type = type_entry.get()
+        def enregistrer_canal():
+            nom = saisie_nom_canal.get()
+            type_c = saisie_type_canal.get()
 
             # Insertion du nouveau canal dans la base de données
-            self.cursor.execute("INSERT INTO channels (name, type, messages) VALUES (%s, %s, %s)", (name, channel_type, ''))
-            self.conn.commit()
-            create_channel_window.destroy()
-            self.refresh_channels()
+            self.curseur.execute("INSERT INTO channels (name, type, messages) VALUES (%s, %s, %s)", (nom, type_c, ''))
+            self.connexion.commit()
+            fenetre_creation_canal.destroy()
+            self.rafraichir_canaux()
 
-        save_button = tk.Button(create_channel_window, text="Enregistrer", command=save_channel)
-        save_button.pack() 
+        bouton_enregistrer = tk.Button(fenetre_creation_canal, text="Enregistrer", command=enregistrer_canal)
+        bouton_enregistrer.pack() 
 
 if __name__ == "__main__":
-    app = ChannelManager()
+    app = GestionnaireCanaux()
     app.mainloop()
