@@ -33,8 +33,7 @@ class Message(db.Model):
         db.session.commit()
 
     def supprimer_message(self):
-        db.session.delete(self)
-        db.session.commit()
-    
+        db.session.delete(self) 
+        db.session.commit() 
 
 
