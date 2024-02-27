@@ -8,7 +8,7 @@ from channel import db as channel_db, Channel
 app = Flask(__name__)
 
 # Configuration de la base de données MySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/my_discord'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/myDiscord' # Connexion à la base de données
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialiser l'extension SQLAlchemy pour le modèle User
@@ -18,9 +18,10 @@ message_db.init_app(app)
 # Initialiser l'extension SQLAlchemy pour le modèle Channel
 channel_db.init_app(app)
 
+# Créer les tables dans la base de données
 @app.route('/api/users', methods=['POST'])
 def create_user():
-    data = request.json
+    data = request.json # Récupère les données de la requête
     new_user = User(first_name=data['first_name'],
                     last_name=data['last_name'],
                     email=data['email'],

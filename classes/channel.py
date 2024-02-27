@@ -11,8 +11,8 @@ class ChannelManager(tk.Tk):
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="123soleil",
-            database="mydiscord"
+            password="002003",
+            database="myDiscord"
         )
         self.cursor = self.conn.cursor()
         

@@ -79,8 +79,8 @@ class ChatApplication(tk.Tk):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root",
-            database="mydiscord"
+            password="002003",
+            database="myDiscord"
         )
 
         cursor = connection.cursor()
@@ -101,17 +101,17 @@ class ChatApplication(tk.Tk):
         connection.close()
 
     def inscrire_utilisateur(self):
-        prenom = self.entry_prenom.get()
-        nom = self.entry_nom.get()
-        email = self.entry_email.get()
-        mot_de_passe = self.entry_mot_de_passe.get()
+        prenom = self.entry_prenom.get() # Récupération du prénom de l'utilisateur à partir du champ de saisie
+        nom = self.entry_nom.get() # Récupération du nom de l'utilisateur à partir du champ de saisie
+        email = self.entry_email.get() # Récupération de l'adresse email de l'utilisateur à partir du champ de saisie
+        mot_de_passe = self.entry_mot_de_passe.get() # Récupération du mot de passe de l'utilisateur à partir du champ de saisie
 
         # Connexion à la base de données MySQL
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root", 
-            database="mydiscord" 
+            password="002003", 
+            database="my_discord" 
 
         )
 
