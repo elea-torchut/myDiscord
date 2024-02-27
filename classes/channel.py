@@ -7,8 +7,6 @@ class ChannelManager(tk.Tk):
         self.title("Gestion des canaux Discord")
         self.geometry("800x600")
 
-        
-
         # Connexion à la base de données MySQL
         self.conn = mysql.connector.connect(
             host="localhost",
@@ -42,7 +40,6 @@ class ChannelManager(tk.Tk):
 
         self.message_listbox = tk.Listbox(self.message_frame, width=50)
         self.message_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
 
         # Chargement initial des canaux
         self.refresh_channels()
@@ -82,39 +79,13 @@ class ChannelManager(tk.Tk):
             channel_type = type_entry.get()
 
             # Insertion du nouveau canal dans la base de données
-            self.cursor.execute("INSERT INTO channels (name, type) VALUES (%s, %s)", (name, channel_type))
+            self.cursor.execute("INSERT INTO channels (name, type, messages) VALUES (%s, %s, %s)", (name, channel_type, ''))
             self.conn.commit()
             create_channel_window.destroy()
             self.refresh_channels()
 
         save_button = tk.Button(create_channel_window, text="Enregistrer", command=save_channel)
-        save_button.pack()
-
-
-    # def load_messages(self):
-    # # Efface la liste actuelle des messages
-    #     self.message_listbox.delete(0, tk.END)
-
-    # # Charge les messages du canal sélectionné depuis la base de données
-    #     selected_channel = self.channel_listbox.get(tk.ACTIVE)
-    #     self.cursor.execute("SELECT message FROM messages WHERE channel=%s", (selected_channel,))
-    #     messages = self.cursor.fetchall()
-
-    # # Affiche les messages dans la liste
-    #     for message in messages:
-    #         self.message_listbox.insert(tk.END, message[0])
-
-
-    def send_message(self, channel):
-        # Enregistrer le message dans la base de données
-        self.cursor.execute("INSERT INTO messages (channel, message) VALUES (%s, %s)", (channel))
-        self.conn.commit()
-
-    def receive_messages(self, channel):
-        # Récupérer les messages du canal depuis la base de données
-        self.cursor.execute("SELECT message FROM messages WHERE channel=%s", (channel))
-        messages = self.cursor.fetchall()
-        return [message[0] for message in messages]
+        save_button.pack() 
 
 if __name__ == "__main__":
     app = ChannelManager()
