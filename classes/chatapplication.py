@@ -135,3 +135,4 @@ class ChatApplication(tk.Tk):
 if __name__ == "__main__":
     app = ChatApplication()
     app.mainloop()
+
