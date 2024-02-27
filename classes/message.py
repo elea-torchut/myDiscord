@@ -1,39 +1,50 @@
-#message.py
+import tkinter as tk
+import mysql.connector
 
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+class MessageManager(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Gestion des messages Discord")
+        self.geometry("800x600")
 
-# Initialiser l'extension SQLAlchemy
-db = SQLAlchemy()
+        # Connexion à la base de données MySQL
+        self.conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="123soleil",
+            database="mydiscord"
+        )
+        self.cursor = self.conn.cursor()
+        
+        # Interface utilisateur
+        self.message_frame = tk.Frame(self)
+        self.message_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-# Créer la classe Message
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True) # Identifiant unique
-    contenu = db.Column(db.Text, nullable=False) # Contenu du message
-    horodatage = db.Column(db.DateTime, default=datetime.utcnow, nullable=False) # Date et heure de création
-    id_auteur = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # Identifiant de l'auteur
-    auteur = db.relationship('User', backref=db.backref('messages', lazy=True)) # Auteur du message
-    id_channel = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False) # Identifiant du channel
-    channel = db.relationship('Channel', backref=db.backref('messages', lazy=True)) # Channel du message
+        self.message_list_label = tk.Label(self.message_frame, text="Messages du canal")
+        self.message_list_label.pack()
 
-    
-    @staticmethod
-    def creer_message(contenu, id_auteur, id_channel):
-        nouveau_message = Message(contenu=contenu, id_auteur=id_auteur, id_channel=id_channel)
-        db.session.add(nouveau_message)
-        db.session.commit()
-        return nouveau_message
+        self.message_listbox = tk.Listbox(self.message_frame, width=50)
+        self.message_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-    @staticmethod
-    def obtenir_message_par_id(message_id):
-        return Message.query.get(message_id)
+        # Chargement initial des messages
+        self.refresh_messages()
 
-    def mettre_a_jour_message(self, nouveau_contenu):
-        self.contenu = nouveau_contenu
-        db.session.commit()
+    def refresh_messages(self):
+        # Efface la liste actuelle des messages
+        self.message_listbox.delete(0, tk.END)
 
-    def supprimer_message(self):
-        db.session.delete(self) 
-        db.session.commit() 
+        # Récupère les messages depuis la base de données
+        messages = self.get_messages()
 
+        # Affiche les messages dans la liste
+        for message in messages:
+            self.message_listbox.insert(tk.END, message[0])
 
+    def get_messages(self):
+        # Récupère les messages depuis la base de données
+        self.cursor.execute("SELECT content FROM messages")
+        return self.cursor.fetchall()
+
+if __name__ == "__main__":
+    app = MessageManager()
+    app.mainloop()
