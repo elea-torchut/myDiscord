@@ -2,7 +2,7 @@
 
 import tkinter as tk
 import mysql.connector
-from channel import ChannelManager
+from channel import GestionnaireCanaux
 
 class ChatApplication(tk.Tk):
     # Classe principale pour l'application de chat
@@ -70,8 +70,8 @@ class ChatApplication(tk.Tk):
     # Méthode pour rediriger l'utilisateur vers la fenêtre de discussion
     def rediriger_vers_discussion(self):
         self.destroy() # Fermer la fenêtre actuelle
-        channel = ChannelManager() # Créer une nouvelle fenêtre pour le chat
-        channel.mainloop() # Lancer la boucle principale de la fenêtre
+        channel = GestionnaireCanaux # Créer une nouvelle fenêtre pour le chat
+        channel.mainloop()
 
     # Méthode pour gérer la connexion de l'utilisateur
     def connexion_utilisateur(self):
