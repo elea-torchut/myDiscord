@@ -12,7 +12,7 @@ class ChannelManager(tk.Tk):
             host="localhost",
             user="root",
             password="002003",
-            database="myDiscord"
+            database="my_discord"
         )
         self.cursor = self.conn.cursor()
         

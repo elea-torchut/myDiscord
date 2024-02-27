@@ -80,7 +80,7 @@ class ChatApplication(tk.Tk):
             host="localhost",
             user="root",
             password="002003",
-            database="myDiscord"
+            database="my_discord"
         )
 
         cursor = connection.cursor()
