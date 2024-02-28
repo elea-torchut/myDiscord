@@ -35,14 +35,15 @@ class ChatApplication(tk.Tk):
         title_label.grid(row=0, column=0, columnspan=2, pady=20, padx=(175,10))
 
         # Création des labels et des champs de saisie pour les informations de connexion
-        self.label_email = tk.Label(main_frame, text="Email:")
-        self.entry_email = tk.Entry(main_frame, width=50)
         
         self.label_prenom = tk.Label(main_frame, text="Prénom:")
         self.entry_prenom = tk.Entry(main_frame, width=50)
 
         self.label_nom = tk.Label(main_frame, text="Nom:")
         self.entry_nom = tk.Entry(main_frame, width=50)
+
+        self.label_email = tk.Label(main_frame, text="Email:")
+        self.entry_email = tk.Entry(main_frame, width=50)
 
         self.label_mot_de_passe = tk.Label(main_frame, text="Mot de passe:")
         self.entry_mot_de_passe = tk.Entry(main_frame, show="*", width=50)
@@ -52,14 +53,15 @@ class ChatApplication(tk.Tk):
         self.button_inscription = tk.Button(main_frame, text="S'inscrire", command=self.inscrire_utilisateur, width=20)
 
         # Placement des widgets dans le cadre principal
-        self.label_email.grid(row=0, column=0, pady=(200,10), padx=150)
-        self.entry_email.grid(row=0, column=1, pady=(200,10))
         
-        self.label_prenom.grid(row=1, column=0, pady=10)
-        self.entry_prenom.grid(row=1, column=1, pady=10)
+        self.label_prenom.grid(row=0, column=0, pady=(200,0), padx=150)
+        self.entry_prenom.grid(row=0, column=1, pady=(200,0))
 
-        self.label_nom.grid(row=2, column=0, pady=10)
-        self.entry_nom.grid(row=2, column=1, pady=10)
+        self.label_nom.grid(row=1, column=0, pady=10)
+        self.entry_nom.grid(row=1, column=1, pady=10)
+
+        self.label_email.grid(row=2, column=0)
+        self.entry_email.grid(row=2, column=1, )
 
         self.label_mot_de_passe.grid(row=3, column=0, pady=10)
         self.entry_mot_de_passe.grid(row=3, column=1, pady=10)
@@ -70,8 +72,10 @@ class ChatApplication(tk.Tk):
     # Méthode pour rediriger l'utilisateur vers la fenêtre de discussion
     def rediriger_vers_discussion(self):
         self.destroy() # Fermer la fenêtre actuelle
-        channel = GestionnaireCanaux # Créer une nouvelle fenêtre pour le chat
-        channel.mainloop()
+        channel = GestionnaireCanaux() # Créer une instance de la classe GestionnaireCanaux
+        channel.mainloop() # Afficher la fenêtre de discussion
+
+
 
     # Méthode pour gérer la connexion de l'utilisateur
     def connexion_utilisateur(self):
@@ -95,6 +99,7 @@ class ChatApplication(tk.Tk):
 
         if utilisateur and utilisateur[4] == mot_de_passe:
             print("Connexion réussie")
+            self.ouvrir_session(utilisateur[0])
             self.rediriger_vers_discussion()
         else:
             print("Adresse email ou mot de passe invalide")
@@ -130,6 +135,25 @@ class ChatApplication(tk.Tk):
         # Fermeture du curseur et de la connexion
         cursor.close()
         connection.close()
+
+    def ouvrir_session(self, id_utilisateur):
+
+        # Connexion à la base de données MySQL
+        self.connexion = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="mydiscord"
+        )
+        self.curseur = self.connexion.cursor()
+        try:
+            # Mettre à jour la colonne session_active de la table user
+            self.curseur.execute("UPDATE users SET session_active = 1 WHERE id = %s", (id_utilisateur,))
+            self.connexion.commit()
+            print("Session ouverte pour l'utilisateur avec succès !")
+        except mysql.connector.Error as err:
+            print("Erreur lors de l'ouverture de la session :", err)
+
 
 
 if __name__ == "__main__":

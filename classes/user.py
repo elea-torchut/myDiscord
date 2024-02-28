@@ -68,6 +68,11 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
+from mysql.connector import Error
+from mysql.connector import errorcode
+from mysql.connector import connect
+from mysql.connector import pooling
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost/mydiscord'
@@ -132,6 +137,67 @@ class Utilisateur(db.Model):
 
     @app.route('/connexion', methods=['POST'])
     def connexion():
+        # data = request.json
+        # email = data.get('email')
+        # mot_de_passe = data.get('password')
+
+        # # Connexion à la base de données MySQL
+        # connection = mysql.connector.connect(
+        #     host="localhost",
+        #     user="root",
+        #     password="root",
+        #     database="mydiscord"
+        # )
+
+        # cursor = connection.cursor()
+
+        # # Récupérer l'utilisateur depuis la base de données
+        # query = "SELECT * FROM users WHERE email = %s"
+        # cursor.execute(query, (email,))
+        # utilisateur = cursor.fetchone()
+
+        # if utilisateur and check_password_hash(utilisateur[4], mot_de_passe):
+        #     query = "UPDATE users SET last_login = NOW() WHERE email = %s"
+        #     cursor.execute(query, (email,))
+        #     cursor.close()
+        #     connection.close()
+        #     return jsonify({'message': 'Connexion réussie'}), 200
+        # else:
+        #     cursor.close()
+        #     connection.close()
+        #     return jsonify({'message': 'Adresse email ou mot de passe invalide'}), 401
+        
+        email = self.entry_email.get()
+        mot_de_passe = self.entry_mot_de_passe.get()
+
+        # Connexion à la base de données MySQL
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="mydiscord"
+        )
+
+        cursor = connection.cursor()
+
+        # Vérification des informations de connexion dans la base de données
+        query = "SELECT * FROM users WHERE email = %s"
+        cursor.execute(query, (email,))
+        utilisateur = cursor.fetchone()
+
+        if utilisateur and utilisateur[4] == mot_de_passe:
+            print("Connexion réussie")
+            self.rediriger_vers_discussion()
+        else:
+            print("Adresse email ou mot de passe invalide")
+
+        # Fermeture du curseur et de la connexion
+        cursor.close()
+        connection.close()
+
+
+    @app.route('/deconnexion', methods=['POST'])
+    def deconnexion(self):
         data = request.json
         email = data.get('email')
         mot_de_passe = data.get('password')
@@ -146,21 +212,11 @@ class Utilisateur(db.Model):
 
         cursor = connection.cursor()
 
-        # Récupérer l'utilisateur depuis la base de données
-        query = "SELECT * FROM users WHERE email = %s"
+        query = "UPDATE users SET last_logout = NOW() WHERE email = %s"
         cursor.execute(query, (email,))
-        utilisateur = cursor.fetchone()
-
-        if utilisateur and check_password_hash(utilisateur[4], mot_de_passe):
-            query = "UPDATE users SET last_login = NOW() WHERE email = %s"
-            cursor.execute(query, (email,))
-            cursor.close()
-            connection.close()
-            return jsonify({'message': 'Connexion réussie'}), 200
-        else:
-            cursor.close()
-            connection.close()
-            return jsonify({'message': 'Adresse email ou mot de passe invalide'}), 401
+        cursor.close()
+        connection.close()
+        return jsonify({'message': 'Déconnexion réussie'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

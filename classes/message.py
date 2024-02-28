@@ -14,7 +14,7 @@ class MessageManager(tk.Tk):
             host="localhost",
             user="root",
             password="root",
-            database="myDiscord"
+            database="mydiscord"
         )
         self.cursor = self.conn.cursor()
         
@@ -31,7 +31,7 @@ class MessageManager(tk.Tk):
         # Chargement initial des messages
         self.refresh_messages()
 
-    def refresh_messages(self):
+    def rafraichir_messages(self):
         # Efface la liste actuelle des messages
         self.message_listbox.delete(0, tk.END)
 
