@@ -1,5 +1,3 @@
-#channel.py
-
 import tkinter as tk
 import mysql.connector
 from message import MessageManager
@@ -22,6 +20,12 @@ class GestionnaireCanaux(tk.Tk):
         self.curseur = self.connexion.cursor()
         
         # Interface utilisateur
+        self.cadre_haut = tk.Frame(self)
+        self.cadre_haut.pack(side=tk.TOP, fill=tk.X)
+
+        self.etiquette_utilisateur = tk.Label(self.cadre_haut, text="Utilisateur actuel: Aucun")
+        self.etiquette_utilisateur.pack(side=tk.LEFT, padx=10, pady=5)
+
         self.cadre_canal = tk.Frame(self)
         self.cadre_canal.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
@@ -42,7 +46,6 @@ class GestionnaireCanaux(tk.Tk):
 
         self.bouton_supprimer_canal = tk.Button(self.cadre_canal, text="Supprimer un canal", command=self.supprimer_canal)
         self.bouton_supprimer_canal.pack()
-
 
         self.bouton_modifier_canal = tk.Button(self.cadre_canal, text="Modifier un canal", command=self.modifier_canal)
         self.bouton_modifier_canal.pack()
@@ -152,7 +155,7 @@ class GestionnaireCanaux(tk.Tk):
         bouton_enregistrer_modification = tk.Button(fenetre_modification_canal, text="Enregistrer", command=lambda: enregistrer_modification(saisie_nouveau_nom_canal.get()))
         bouton_enregistrer_modification.pack()
 
-    # Fonction pour enregistrer les modifications
+        # Fonction pour enregistrer les modifications
         def enregistrer_modification(nouveau_nom):
             # Exécute la requête SQL pour mettre à jour le nom du canal dans la base de données
             self.curseur.execute("UPDATE channels SET name = %s WHERE name = %s", (nouveau_nom, nom_canal))
@@ -194,10 +197,14 @@ class GestionnaireCanaux(tk.Tk):
 
     def verifier_identification(self, email, mot_de_passe):
         try:
-            self.curseur.execute("SELECT id FROM users WHERE email = %s AND password = %s", (email, mot_de_passe))
+            self.curseur.execute("SELECT id, nom, prenom FROM users WHERE email = %s AND password = %s", (email, mot_de_passe))
             utilisateur = self.curseur.fetchone()
             if utilisateur:
                 self.utilisateur_actuel = utilisateur[0]
+                nom = utilisateur[1]
+                prenom = utilisateur[2]
+                nom_prenom = f"{nom} {prenom}"  # Concaténation du nom et du prénom
+                self.etiquette_utilisateur.config(text=nom_prenom)  # Mettre à jour le label avec le nom et prénom
                 print("Connexion réussie pour l'utilisateur avec l'ID:", self.utilisateur_actuel)
                 return True
             else:

@@ -35,7 +35,7 @@ class ChatApplication(tk.Tk):
         title_label.grid(row=0, column=0, columnspan=2, pady=20, padx=(175,10))
 
         # Création des labels et des champs de saisie pour les informations de connexion
-        
+
         self.label_prenom = tk.Label(main_frame, text="Prénom:")
         self.entry_prenom = tk.Entry(main_frame, width=50)
 
@@ -72,7 +72,10 @@ class ChatApplication(tk.Tk):
     # Méthode pour rediriger l'utilisateur vers la fenêtre de discussion
     def rediriger_vers_discussion(self):
         self.destroy() # Fermer la fenêtre actuelle
-        channel = GestionnaireCanaux() # Créer une instance de la classe GestionnaireCanaux
+        channel = GestionnaireCanaux()
+        
+        channel.verifier_identification() # Créer une instance de la classe GestionnaireCanaux
+        self.ouvrir_session(1)
         channel.mainloop() # Afficher la fenêtre de discussion
 
 
