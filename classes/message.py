@@ -13,7 +13,7 @@ class MessageManager(tk.Tk):
         self.conn = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="002003",
+            password="root",
             database="myDiscord"
         )
         self.cursor = self.conn.cursor()

@@ -37,6 +37,36 @@ class GestionnaireCanaux(tk.Tk):
         self.bouton_creer_canal = tk.Button(self.cadre_canal, text="Créer un canal", command=self.creer_fenetre_canal)
         self.bouton_creer_canal.pack()
 
+        self.bouton_supprimer_canal = tk.Button(self.cadre_canal, text="Supprimer un canal")
+        self.bouton_supprimer_canal.pack()
+
+        self.bouton_modifier_canal = tk.Button(self.cadre_canal, text="Modifier un canal")
+        self.bouton_modifier_canal.pack()
+
+        self.bouton_rejoindre_canal = tk.Button(self.cadre_canal, text="Rejoindre un canal")
+        self.bouton_rejoindre_canal.pack()
+
+        self.bouton_quitter_canal = tk.Button(self.cadre_canal, text="Quitter un canal")
+        self.bouton_quitter_canal.pack()
+
+        # self.bouton_supprimer_message = tk.Button(self.cadre_message, text="Supprimer un message")
+        # self.bouton_supprimer_message.pack()
+
+        # self.bouton_modifier_message = tk.Button(self.cadre_message, text="Modifier un message")
+        # self.bouton_modifier_message.pack()
+
+        self.bouton_actualiser_message = tk.Button(self.cadre_message, text="Actualiser les messages")
+        self.bouton_actualiser_message.pack()
+
+        self.etiquette_message = tk.Label(self.cadre_message, text="Message")
+        self.etiquette_message.pack()
+
+        self.saisie_message = tk.Entry(self.cadre_message)
+        self.saisie_message.pack()
+        
+        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message")
+        self.bouton_envoyer_message.pack()
+
         self.etiquette_liste_message = tk.Label(self.cadre_message, text="Messages du canal")
         self.etiquette_liste_message.pack()
 
