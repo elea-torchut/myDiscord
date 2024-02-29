@@ -1,16 +1,52 @@
 #message.py
 
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+import tkinter as tk
+import mysql.connector
 
-# Initialiser l'extension SQLAlchemy
-db = SQLAlchemy()
+class MessageManager(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Gestion des messages Discord")
+        self.geometry("800x600")
 
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    author = db.relationship('User', backref=db.backref('messages', lazy=True))
-    channel_id = db.Column(db.Integer, db.ForeignKey('channel.id'), nullable=False)
-    channel = db.relationship('Channel', backref=db.backref('messages', lazy=True))
+        # Connexion à la base de données MySQL
+        self.conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="mydiscord"
+        )
+        self.cursor = self.conn.cursor()
+        
+        # Interface utilisateur
+        self.message_frame = tk.Frame(self)
+        self.message_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        self.message_list_label = tk.Label(self.message_frame, text="Messages du canal")
+        self.message_list_label.pack()
+
+        self.message_listbox = tk.Listbox(self.message_frame, width=50)
+        self.message_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Chargement initial des messages
+        self.refresh_messages()
+
+    def rafraichir_messages(self):
+        # Efface la liste actuelle des messages
+        self.message_listbox.delete(0, tk.END)
+
+        # Récupère les messages depuis la base de données
+        messages = self.get_messages()
+
+        # Affiche les messages dans la liste
+        for message in messages:
+            self.message_listbox.insert(tk.END, message[0])
+
+    def get_messages(self):
+        # Récupère les messages depuis la base de données
+        self.cursor.execute("SELECT content FROM messages")
+        return self.cursor.fetchall()
+
+if __name__ == "__main__":
+    app = MessageManager()
+    app.mainloop()

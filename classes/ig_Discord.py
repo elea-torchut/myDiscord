@@ -4,7 +4,7 @@ import requests
 # Fonction pour charger les utilisateurs depuis le serveur backend
 def load_users():
     # Faire une requête GET au serveur backend pour récupérer les utilisateurs
-    
+
     url = "http://localhost:3306/mydiscord/users"  # Remplacez l'URL par celle de votre serveur backend
     try:
         response = requests.get(url) # Faire une requête GET au serveur backend pour récupérer les utilisateurs

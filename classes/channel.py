@@ -1,11 +1,14 @@
 import tkinter as tk
 import mysql.connector
+from message import MessageManager
+from user import Utilisateur
 
 class GestionnaireCanaux(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Gestion des canaux Discord")
         self.geometry("800x600")
+        self.utilisateur_actuel = None
 
         # Connexion à la base de données MySQL
         self.connexion = mysql.connector.connect(
@@ -35,17 +38,42 @@ class GestionnaireCanaux(tk.Tk):
         self.bouton_creer_canal = tk.Button(self.cadre_canal, text="Créer un canal", command=self.creer_fenetre_canal)
         self.bouton_creer_canal.pack()
 
+        self.bouton_supprimer_canal = tk.Button(self.cadre_canal, text="Supprimer un canal", command=self.supprimer_canal)
+        self.bouton_supprimer_canal.pack()
+
+
+        self.bouton_modifier_canal = tk.Button(self.cadre_canal, text="Modifier un canal", command=self.modifier_canal)
+        self.bouton_modifier_canal.pack()
+
+        self.bouton_rejoindre_canal = tk.Button(self.cadre_canal, text="Rejoindre un canal", command=self.rejoindre_canal) 
+        self.bouton_rejoindre_canal.pack()
+
+        self.bouton_quitter_canal = tk.Button(self.cadre_canal, text="Quitter un canal")
+        self.bouton_quitter_canal.pack()
+
+        self.bouton_actualiser_message = tk.Button(self.cadre_message, text="Actualiser les messages")
+        self.bouton_actualiser_message.pack()
+
+        self.etiquette_message = tk.Label(self.cadre_message, text="Message")
+        self.etiquette_message.pack()
+
+        self.saisie_message = tk.Entry(self.cadre_message)
+        self.saisie_message.pack()
+        
+        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message", command=self.envoyer_message)
+        self.bouton_envoyer_message.pack()
+
         self.etiquette_liste_message = tk.Label(self.cadre_message, text="Messages du canal")
         self.etiquette_liste_message.pack()
 
         self.liste_message = tk.Listbox(self.cadre_message, width=50)
         self.liste_message.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
+        self.bouton_deconnexion = tk.Button(self.cadre_message, text="Se déconnecter")
+        self.bouton_deconnexion.pack()
+
         # Chargement initial des canaux
         self.rafraichir_canaux()
-
-        # Associe l'événement "clic sur un canal" à la fonction on_clic_canal
-        self.liste_canal.bind('<ButtonRelease-1>', self.on_clic_canal)
 
     def rafraichir_canaux(self):
         # Efface la liste actuelle des canaux
@@ -88,28 +116,90 @@ class GestionnaireCanaux(tk.Tk):
             self.rafraichir_canaux()
 
         bouton_enregistrer = tk.Button(fenetre_creation_canal, text="Enregistrer", command=enregistrer_canal)
-        bouton_enregistrer.pack()
+        bouton_enregistrer.pack() 
 
-    def afficher_messages(self, canal):
-        # Efface la liste actuelle des messages
-        self.liste_message.delete(0, tk.END)
+    def supprimer_canal(self):
+        # Récupère le nom du canal sélectionné dans la liste
+        nom_canal = self.liste_canal.get(tk.ACTIVE)
 
-        # Récupère les messages du canal depuis la base de données
-        self.curseur.execute("SELECT message FROM messages WHERE channel = %s", (canal,))
-        messages = self.curseur.fetchall()
+        # Exécute la requête SQL pour supprimer le canal de la base de données
+        self.curseur.execute("DELETE FROM channels WHERE name = %s", (nom_canal,))
+        self.connexion.commit()
 
-        # Affiche les messages dans la liste
-        for message in messages:
-            self.liste_message.insert(tk.END, message[0])
+        # Rafraîchit la liste des canaux pour refléter les changements
+        self.rafraichir_canaux()
 
-    def on_clic_canal(self, event):
-        # Obtient l'index du canal sélectionné
-        index = self.liste_canal.curselection()
-        if index:
-            # Obtient le nom du canal sélectionné
-            canal_selectionne = self.liste_canal.get(index)
-            # Affiche les messages du canal sélectionné
-            self.afficher_messages(canal_selectionne)
+    def modifier_canal(self):
+        # Récupère le nom du canal sélectionné dans la liste
+        nom_canal = self.liste_canal.get(tk.ACTIVE)
+
+        # Crée une fenêtre de modification de canal
+        fenetre_modification_canal = tk.Toplevel(self)
+        fenetre_modification_canal.title("Modifier le canal")
+        fenetre_modification_canal.geometry("300x200")
+
+        # Étiquette pour le nouveau nom du canal
+        etiquette_nouveau_nom_canal = tk.Label(fenetre_modification_canal, text="Nouveau nom du canal:")
+        etiquette_nouveau_nom_canal.pack()
+
+        # Saisie du nouveau nom du canal
+        saisie_nouveau_nom_canal = tk.Entry(fenetre_modification_canal)
+        saisie_nouveau_nom_canal.pack()
+
+        # Bouton pour enregistrer les modifications
+        bouton_enregistrer_modification = tk.Button(fenetre_modification_canal, text="Enregistrer", command=lambda: enregistrer_modification(saisie_nouveau_nom_canal.get()))
+        bouton_enregistrer_modification.pack()
+
+        # Fonction pour enregistrer les modifications
+        def enregistrer_modification(nouveau_nom):
+            # Exécute la requête SQL pour mettre à jour le nom du canal dans la base de données
+            self.curseur.execute("UPDATE channels SET name = %s WHERE name = %s", (nouveau_nom, nom_canal))
+            self.connexion.commit()
+
+            # Ferme la fenêtre de modification de canal
+            fenetre_modification_canal.destroy()
+
+            # Rafraîchit la liste des canaux pour refléter les changements
+            self.rafraichir_canaux()
+
+    def rejoindre_canal(self):
+        nom_canal = self.liste_canal.get(tk.ACTIVE)
+        if self.utilisateur_actuel:
+            try:
+                self.curseur.execute("SELECT id FROM channels WHERE name = %s", (nom_canal,))
+                canal = self.curseur.fetchone()
+                canal_id = canal[0] if canal else None
+
+                if canal_id:
+                    self.curseur.execute("UPDATE users SET channel_id = %s WHERE id = %s", (canal_id, self.utilisateur_actuel))
+                    self.connexion.commit()
+                    print("L'utilisateur a rejoint le canal avec succès !")
+                else:
+                    print("Le canal spécifié n'existe pas.")
+            except mysql.connector.Error as err:
+                print("Erreur lors de la tentative de rejoindre le canal :", err)
+        else:
+            print("Aucun utilisateur n'est connecté.")
+
+    def envoyer_message(self):
+        message = self.saisie_message.get()
+        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+        self.connexion.commit()
+
+    def verifier_identification(self, email, mot_de_passe):
+        try:
+            self.curseur.execute("SELECT id FROM users WHERE email = %s AND password = %s", (email, mot_de_passe))
+            utilisateur = self.curseur.fetchone()
+            if utilisateur:
+                self.utilisateur_actuel = utilisateur[0]
+                print("Connexion réussie pour l'utilisateur avec l'ID:", self.utilisateur_actuel)
+                return True
+            else:
+                print("Identifiants incorrects.")
+                return False
+        except mysql.connector.Error as err:
+            print("Erreur lors de la vérification de l'identification :", err)
+            return False
 
 if __name__ == "__main__":
     app = GestionnaireCanaux()
