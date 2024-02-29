@@ -30,3 +30,7 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (author_id) REFERENCES users(id),
     FOREIGN KEY (channel_id) REFERENCES channels(id)
 );
+
+ALTER TABLE channels
+ADD COLUMN type VARCHAR(255),
+ADD COLUMN messages VARCHAR(255);
