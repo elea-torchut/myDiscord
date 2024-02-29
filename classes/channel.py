@@ -9,7 +9,8 @@ class GestionnaireCanaux(tk.Tk):
         self.title("Gestion des canaux Discord")
         self.geometry("800x600")
         self.utilisateur_actuel = None
-
+        self.canal_actuel = None  # Variable pour stocker l'ID du canal actuellement sélectionné        
+        
         # Connexion à la base de données MySQL
         self.connexion = mysql.connector.connect(
             host="localhost",
@@ -78,11 +79,9 @@ class GestionnaireCanaux(tk.Tk):
     def rafraichir_canaux(self):
         # Efface la liste actuelle des canaux
         self.liste_canal.delete(0, tk.END)
-
         # Récupère les canaux depuis la base de données
         self.curseur.execute("SELECT name FROM channels")
         canaux = self.curseur.fetchall()
-
         # Affiche les canaux dans la liste
         for canal in canaux:
             self.liste_canal.insert(tk.END, canal[0])
@@ -183,8 +182,35 @@ class GestionnaireCanaux(tk.Tk):
 
     def envoyer_message(self):
         message = self.saisie_message.get()
-        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-        self.connexion.commit()
+        if self.canal_actuel:
+            self.curseur.execute("INSERT INTO messages (content, channel_id) VALUES (%s, %s)", (message, self.canal_actuel))
+            self.connexion.commit()
+            self.rafraichir_messages()
+        else:
+            print("Aucun canal sélectionné.")
+
+    def selectionner_canal(self, event):
+        selection = event.widget.curselection()
+        if selection:
+            index = selection[0]
+            nom_canal = event.widget.get(index)
+            self.curseur.execute("SELECT id FROM channels WHERE name = %s", (nom_canal,))
+            canal = self.curseur.fetchone()
+            if canal:
+                self.canal_actuel = canal[0]
+                self.rafraichir_messages()
+            else:
+                print("Le canal sélectionné n'existe pas.")         
+
+    def rafraichir_messages(self):
+        self.liste_message.delete(0, tk.END)
+        if self.canal_actuel:
+            self.curseur.execute("SELECT content FROM messages WHERE channel_id = %s", (self.canal_actuel,))
+            messages = self.curseur.fetchall()
+            for message in messages:
+                self.liste_message.insert(tk.END, message[0])
+        else:
+            print("Aucun canal sélectionné.")   
 
     def verifier_identification(self, email, mot_de_passe):
         try:

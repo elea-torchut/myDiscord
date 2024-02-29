@@ -86,7 +86,7 @@ class ChatApplication(tk.Tk):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root",
+            password="123soleil",
             database="mydiscord"
         )
 
@@ -118,7 +118,7 @@ class ChatApplication(tk.Tk):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root", 
+            password="123soleil", 
             database="mydiscord" 
 
         )
@@ -142,7 +142,7 @@ class ChatApplication(tk.Tk):
         self.connexion = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root",
+            password="123soleil",
             database="mydiscord"
         )
         self.curseur = self.connexion.cursor()
