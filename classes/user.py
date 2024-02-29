@@ -43,12 +43,12 @@ def inscription():
     # Vérifier si l'email est déjà utilisé
     query = "SELECT * FROM users WHERE email = %s"
     cursor.execute(query, (email,))
-    utilisateur = cursor.fetchone()
+    utilisateur = cursor.fetchone() # Récupère le premier utilisateur correspondant à l'email
 
-    if utilisateur:
-        cursor.close()
-        connection.close()
-        return jsonify({'message': 'Cet email est déjà utilisé'}), 400
+    if utilisateur: # Si l'email est déjà utilisé
+        cursor.close() # Fermeture du curseur
+        connection.close() # Fermeture de la connexion
+        return jsonify({'message': 'Cet email est déjà utilisé'}), 400 # Retourne une erreur 400
 
     # Créer un nouvel utilisateur
     nouvel_utilisateur = Utilisateur(prenom=prenom, nom=nom, email=email)
@@ -68,7 +68,7 @@ def inscription():
 
 @app.route('/connexion', methods=['POST'])
 def connexion():
-    data = request.json
+    data = request.json 
     email = data.get('email')
     mot_de_passe = data.get('password')
 

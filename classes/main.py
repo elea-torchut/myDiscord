@@ -1,18 +1,20 @@
 # main.py
 from chatapplication import ChatApplication
+from user import Utilisateur
+from channel import ChannelManager
 from message import MessageManager
-from server import app as server_app
-from user import Utilisateur, app as user_app
 
-if __name__ == "__main__":
-    # Créer une instance de l'application de chat
-    chat_app = ChatApplication()
+# Créer une instance de l'application de chat
+app = ChatApplication()
 
-    # Créer une instance du gestionnaire de messages
-    message_manager = MessageManager()
+# Créer une instance de la gestion des utilisateurs
+user_manager = Utilisateur()
 
-    # Exécuter le serveur Flask pour les utilisateurs
-    user_app.run(debug=True)
+# Créer une instance de la gestion des canaux
+channel_manager = ChannelManager()
 
-    # Exécuter le serveur Flask pour le chat
-    server_app.run(debug=True)
+# Créer une instance de la gestion des messages
+message_manager = MessageManager()
+
+# Lancer l'application de chat
+app.mainloop()

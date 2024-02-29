@@ -83,14 +83,14 @@ class ChatApplication(tk.Tk):
             database="my_discord"
         )
 
-        cursor = connection.cursor()
+        cursor = connection.cursor() # Création d'un curseur pour exécuter des requêtes SQL
 
         # Vérification des informations de connexion dans la base de données
         query = "SELECT * FROM users WHERE email = %s"
         cursor.execute(query, (email,))
         utilisateur = cursor.fetchone()
 
-        if utilisateur and utilisateur[4] == mot_de_passe:
+        if utilisateur and utilisateur[4] == mot_de_passe: # Si l'utilisateur existe et que le mot de passe est correct 
             print("Connexion réussie")
             self.rediriger_vers_discussion()
         else:

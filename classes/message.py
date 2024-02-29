@@ -31,10 +31,10 @@ class MessageManager(tk.Tk):
 
     def refresh_messages(self):
         # Efface la liste actuelle des messages
-        self.message_listbox.delete(0, tk.END)
+        self.message_listbox.delete(0, tk.END) # Supprime tous les éléments de la liste
 
         # Récupère les messages depuis la base de données
-        messages = self.get_messages()
+        messages = self.get_messages() # Récupère les messages depuis la base de données
 
         # Affiche les messages dans la liste
         for message in messages:
@@ -42,8 +42,8 @@ class MessageManager(tk.Tk):
 
     def get_messages(self):
         # Récupère les messages depuis la base de données
-        self.cursor.execute("SELECT content FROM messages")
-        return self.cursor.fetchall()
+        self.cursor.execute("SELECT content FROM messages") # Exécute la requête SQL
+        return self.cursor.fetchall() # Récupère tous les résultats de la requête
 
 if __name__ == "__main__":
     app = MessageManager()
