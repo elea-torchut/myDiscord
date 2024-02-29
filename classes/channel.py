@@ -44,6 +44,9 @@ class GestionnaireCanaux(tk.Tk):
         # Chargement initial des canaux
         self.rafraichir_canaux()
 
+        # Associe l'événement "clic sur un canal" à la fonction on_clic_canal
+        self.liste_canal.bind('<ButtonRelease-1>', self.on_clic_canal)
+
     def rafraichir_canaux(self):
         # Efface la liste actuelle des canaux
         self.liste_canal.delete(0, tk.END)
@@ -85,7 +88,28 @@ class GestionnaireCanaux(tk.Tk):
             self.rafraichir_canaux()
 
         bouton_enregistrer = tk.Button(fenetre_creation_canal, text="Enregistrer", command=enregistrer_canal)
-        bouton_enregistrer.pack() 
+        bouton_enregistrer.pack()
+
+    def afficher_messages(self, canal):
+        # Efface la liste actuelle des messages
+        self.liste_message.delete(0, tk.END)
+
+        # Récupère les messages du canal depuis la base de données
+        self.curseur.execute("SELECT message FROM messages WHERE channel = %s", (canal,))
+        messages = self.curseur.fetchall()
+
+        # Affiche les messages dans la liste
+        for message in messages:
+            self.liste_message.insert(tk.END, message[0])
+
+    def on_clic_canal(self, event):
+        # Obtient l'index du canal sélectionné
+        index = self.liste_canal.curselection()
+        if index:
+            # Obtient le nom du canal sélectionné
+            canal_selectionne = self.liste_canal.get(index)
+            # Affiche les messages du canal sélectionné
+            self.afficher_messages(canal_selectionne)
 
 if __name__ == "__main__":
     app = GestionnaireCanaux()
