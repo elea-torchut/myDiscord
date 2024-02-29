@@ -7,14 +7,17 @@ CREATE TABLE IF NOT EXISTS users (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(100) NOT NULL
+    password VARCHAR(100) NOT NULL,
+    session_active BOOLEAN DEFAULT 0
 );
 
 
 -- Créer la table des canaux
 CREATE TABLE IF NOT EXISTS channels (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    name VARCHAR(50) NOT NULL,
+    type VARCHAR(255),
+    messages VARCHAR(255)
 );
 
 -- Créer la table des messages
