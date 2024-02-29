@@ -73,7 +73,7 @@ class ChatApplication(tk.Tk):
     def rediriger_vers_discussion(self):
         self.destroy() # Fermer la fenêtre actuelle
         channel = GestionnaireCanaux()
-        
+
         channel.verifier_identification() # Créer une instance de la classe GestionnaireCanaux
         self.ouvrir_session(1)
         channel.mainloop() # Afficher la fenêtre de discussion
@@ -96,9 +96,9 @@ class ChatApplication(tk.Tk):
         cursor = connection.cursor()
 
         # Vérification des informations de connexion dans la base de données
-        query = "SELECT * FROM users WHERE email = %s"
-        cursor.execute(query, (email,))
-        utilisateur = cursor.fetchone()
+        query = "SELECT * FROM users WHERE email = %s" # Requête pour récupérer l'utilisateur avec l'adresse email spécifiée
+        cursor.execute(query, (email,)) # Exécution de la requête
+        utilisateur = cursor.fetchone() # Récupération de l'utilisateur
 
         if utilisateur and utilisateur[4] == mot_de_passe:
             print("Connexion réussie")

@@ -65,7 +65,7 @@ class GestionnaireCanaux(tk.Tk):
         self.saisie_message = tk.Entry(self.cadre_message)
         self.saisie_message.pack()
         
-        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message")
+        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message", command=self.envoyer_message)
         self.bouton_envoyer_message.pack()
 
         self.etiquette_liste_message = tk.Label(self.cadre_message, text="Messages du canal")
@@ -181,31 +181,36 @@ class GestionnaireCanaux(tk.Tk):
                 if canal_id:
                     self.curseur.execute("UPDATE users SET channel_id = %s WHERE id = %s", (canal_id, self.utilisateur_actuel))
                     self.connexion.commit()
-                    print("L'utilisateur a rejoint le canal avec succès !")
+                    print("L'utilisateur a rejoint le canal", nom_canal, "avec succès !")
                 else:
-                    print("Le canal spécifié n'existe pas.")
+                    print("Le canal spécifié", nom_canal, "n'existe pas.")
             except mysql.connector.Error as err:
                 print("Erreur lors de la tentative de rejoindre le canal :", err)
         else:
             print("Aucun utilisateur n'est connecté.")
 
     def envoyer_message(self):
-        message = MessageManager()
         message = self.saisie_message.get()
-        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-        self.connexion.commit()
+        print(message)
+        self.etiquette_liste_message
 
+        # self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+        # self.connexion.commit()
+
+
+        # message = MessageManager()
+        # message = self.saisie_message.get()
+        # self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+        # self.connexion.commit()
+
+        
     def verifier_identification(self, email, mot_de_passe):
         try:
-            self.curseur.execute("SELECT id, nom, prenom FROM users WHERE email = %s AND password = %s", (email, mot_de_passe))
+            self.curseur.execute("SELECT id FROM users WHERE email = %s AND password = %s", (email, mot_de_passe))
             utilisateur = self.curseur.fetchone()
             if utilisateur:
                 self.utilisateur_actuel = utilisateur[0]
-                nom = utilisateur[1]
-                prenom = utilisateur[2]
-                nom_prenom = f"{nom} {prenom}"  # Concaténation du nom et du prénom
-                self.etiquette_utilisateur.config(text=nom_prenom)  # Mettre à jour le label avec le nom et prénom
-                print("Connexion réussie pour l'utilisateur avec l'ID:", self.utilisateur_actuel)
+                print("Session ouverte pour l'utilisateur avec succès !")
                 return True
             else:
                 print("Identifiants incorrects.")

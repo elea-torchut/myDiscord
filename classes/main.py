@@ -8,7 +8,10 @@ if __name__ == "__main__":
     app = ChatApplication()
     app.mainloop()
     if app.connexion_utilisateur:
-        app2 = GestionnaireCanaux()
-        app2.mainloop()
-        app3 = MessageManager()
-        app3.mainloop()
+        app = GestionnaireCanaux(app.utilisateur_actuel)
+        app.mainloop()
+        if app.utilisateur_actuel:
+            app = MessageManager(app.utilisateur_actuel)
+            app.mainloop()
+
+  
