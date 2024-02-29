@@ -77,6 +77,10 @@ class GestionnaireCanaux(tk.Tk):
         self.bouton_deconnexion = tk.Button(self.cadre_message, text="Se déconnecter")
         self.bouton_deconnexion.pack()
 
+        # Création de la combobox pour afficher les canaux disponibles
+        self.label_liste_canal = tk.Label(self.cadre_canal, text="Liste des canaux disponibles")
+        self.label_liste_canal.pack()
+
         # Chargement initial des canaux
         self.rafraichir_canaux()
 
@@ -171,23 +175,37 @@ class GestionnaireCanaux(tk.Tk):
             self.bouton_modifier_canal = tk.Button(self.cadre_canal, text="Modifier un canal", command=self.modifier_canal)
             self.bouton_modifier_canal.pack()
 
-    def rejoindre_canal(self, nom_canal):
-        if self.utilisateur_actuel:
-            try:
-                self.curseur.execute("SELECT id FROM channels WHERE name = %s", (nom_canal,))
-                canal = self.curseur.fetchone()
-                canal_id = canal[0] if canal else None
+    def charger_canaux_disponibles(self):
+        # Cette méthode charge les canaux disponibles dans la combobox
+        try:
+            self.curseur.execute("SELECT name FROM channels")
+            canaux = self.curseur.fetchall()
+            canaux_disponibles = [canal[0] for canal in canaux]
+            self.liste_canal["values"] = canaux_disponibles
+        except mysql.connector.Error as err:
+            print("Erreur lors du chargement des canaux disponibles :", err)
 
-                if canal_id:
-                    self.curseur.execute("UPDATE users SET channel_id = %s WHERE id = %s", (canal_id, self.utilisateur_actuel))
-                    self.connexion.commit()
-                    print("L'utilisateur a rejoint le canal", nom_canal, "avec succès !")
-                else:
-                    print("Le canal spécifié", nom_canal, "n'existe pas.")
+    def rejoindre_canal(self):
+        # Récupérer l'indice de l'élément sélectionné dans la liste des canaux
+        indice_selectionne = self.liste_canal.curselection()
+        
+        # Vérifier si un élément est sélectionné
+        if indice_selectionne:
+            # Récupérer le nom du canal à partir de l'indice sélectionné
+            nom_canal = self.liste_canal.get(indice_selectionne[0])
+
+            # Récupérer l'ID de l'utilisateur actuel
+            id_utilisateur = self.utilisateur_actuel
+
+            try:
+                # Mettre à jour la colonne 'liste_utilisateurs' dans la table 'channels'
+                self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', %s') WHERE name = %s", (id_utilisateur, nom_canal))
+                self.connexion.commit()
+                print(f"L'utilisateur {id_utilisateur} a rejoint le canal {nom_canal} avec succès.")
             except mysql.connector.Error as err:
-                print("Erreur lors de la tentative de rejoindre le canal :", err)
+                print("Erreur lors de la mise à jour de la liste des utilisateurs dans le canal :", err)
         else:
-            print("Aucun utilisateur n'est connecté.")
+            print("Aucun canal sélectionné.")
 
     def envoyer_message(self):
         message = self.saisie_message.get()
@@ -204,6 +222,7 @@ class GestionnaireCanaux(tk.Tk):
         # self.connexion.commit()
 
         
+    # Méthode pour vérifier l'identification de l'utilisateur
     def verifier_identification(self, email, mot_de_passe):
         try:
             self.curseur.execute("SELECT id FROM users WHERE email = %s AND password = %s", (email, mot_de_passe))
@@ -218,6 +237,7 @@ class GestionnaireCanaux(tk.Tk):
         except mysql.connector.Error as err:
             print("Erreur lors de la vérification de l'identification :", err)
             return False
+
 
 
 

@@ -33,4 +33,5 @@ CREATE TABLE IF NOT EXISTS messages (
 
 ALTER TABLE channels
 ADD COLUMN type VARCHAR(255),
-ADD COLUMN messages VARCHAR(255);
+ADD COLUMN messages VARCHAR(255)
+ADD COLUMN liste_utilisateurs TEXT;

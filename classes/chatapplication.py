@@ -69,47 +69,40 @@ class ChatApplication(tk.Tk):
         self.button_connexion.grid(row=4, column=0, columnspan=2, pady=10)
         self.button_inscription.grid(row=4, column=1, columnspan=2, pady=10)
 
+        
+
     # Méthode pour rediriger l'utilisateur vers la fenêtre de discussion
     def rediriger_vers_discussion(self):
-        self.destroy() # Fermer la fenêtre actuelle
-        channel = GestionnaireCanaux()
+        self.destroy()  # Fermer la fenêtre actuelle
+        email = self.entry_email.get()  # Récupérer l'email saisi par l'utilisateur
+        mot_de_passe = self.entry_mot_de_passe.get()  # Récupérer le mot de passe saisi par l'utilisateur
 
-        channel.verifier_identification() # Créer une instance de la classe GestionnaireCanaux
-        self.ouvrir_session(1)
-        channel.mainloop() # Afficher la fenêtre de discussion
+        channel = GestionnaireCanaux()
+        if channel.verifier_identification(email, mot_de_passe):
+            self.ouvrir_session(1)
+            channel.mainloop()
+        else:
+            print("Adresse email ou mot de passe invalide")
 
 
 
     # Méthode pour gérer la connexion de l'utilisateur
+    # Méthode pour gérer la connexion de l'utilisateur
+    # Méthode pour gérer la connexion de l'utilisateur
     def connexion_utilisateur(self):
-        email = self.entry_email.get() # Récupérer l'adresse email saisie par l'utilisateur
-        mot_de_passe = self.entry_mot_de_passe.get() # Récupérer le mot de passe saisi par l'utilisateur
+        email = self.entry_email.get()  # Récupérer l'adresse email saisie par l'utilisateur
+        mot_de_passe = self.entry_mot_de_passe.get()  # Récupérer le mot de passe saisi par l'utilisateur
 
-        # Connexion à la base de données MySQL
-        connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="root",
-            database="mydiscord"
-        )
+        # Création d'une instance de la classe GestionnaireCanaux
+        channel = GestionnaireCanaux()
 
-        cursor = connection.cursor()
-
-        # Vérification des informations de connexion dans la base de données
-        query = "SELECT * FROM users WHERE email = %s" # Requête pour récupérer l'utilisateur avec l'adresse email spécifiée
-        cursor.execute(query, (email,)) # Exécution de la requête
-        utilisateur = cursor.fetchone() # Récupération de l'utilisateur
-
-        if utilisateur and utilisateur[4] == mot_de_passe:
+        # Appel de la méthode verifier_identification de GestionnaireCanaux avec email et mot_de_passe
+        if channel.verifier_identification(email, mot_de_passe):
             print("Connexion réussie")
-            self.ouvrir_session(utilisateur[0])
+            self.ouvrir_session([0])
             self.rediriger_vers_discussion()
         else:
             print("Adresse email ou mot de passe invalide")
-
-        # Fermeture du curseur et de la connexion
-        cursor.close()
-        connection.close()
 
     def inscrire_utilisateur(self):
         prenom = self.entry_prenom.get()
