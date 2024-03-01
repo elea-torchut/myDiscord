@@ -186,26 +186,42 @@ class GestionnaireCanaux(tk.Tk):
             print("Erreur lors du chargement des canaux disponibles :", err)
 
     def rejoindre_canal(self):
-        # Récupérer l'indice de l'élément sélectionné dans la liste des canaux
-        indice_selectionne = self.liste_canal.curselection()
+        # Récupérer le nom du canal sélectionné dans la liste
+        nom_canal = self.liste_canal.get(tk.ACTIVE)
+
+        # Récupérer l'ID de l'utilisateur actuel à partir de votre gestionnaire de canaux
+        id_utilisateur = self.utilisateur_actuel  # Assurez-vous que cela contient l'ID de l'utilisateur actuel
+
+        # Mettre à jour la colonne "liste_utilisateurs" dans la table "channels"
+        try:
+            self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', ', %s) WHERE name = %s", (id_utilisateur, nom_canal))
+            self.connexion.commit()
+            print(f"L'utilisateur {id_utilisateur} a rejoint le canal {nom_canal} avec succès.")
+        except mysql.connector.Error as err:
+            print("Erreur lors de la mise à jour des utilisateurs dans le canal :", err)
+
+
+    # def rejoindre_canal(self):
+    #     # Récupérer l'indice de l'élément sélectionné dans la liste des canaux
+    #     indice_selectionne = self.liste_canal.curselection()
         
-        # Vérifier si un élément est sélectionné
-        if indice_selectionne:
-            # Récupérer le nom du canal à partir de l'indice sélectionné
-            nom_canal = self.liste_canal.get(indice_selectionne[0])
+    #     # Vérifier si un élément est sélectionné
+    #     if indice_selectionne:
+    #         # Récupérer le nom du canal à partir de l'indice sélectionné
+    #         nom_canal = self.liste_canal.get(indice_selectionne[0])
 
-            # Récupérer l'ID de l'utilisateur actuel
-            id_utilisateur = self.utilisateur_actuel
+    #         # Récupérer l'ID de l'utilisateur actuel
+    #         id_utilisateur = self.utilisateur_actuel
 
-            try:
-                # Mettre à jour la colonne 'liste_utilisateurs' dans la table 'channels'
-                self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', %s') WHERE name = %s", (id_utilisateur, nom_canal))
-                self.connexion.commit()
-                print(f"L'utilisateur {id_utilisateur} a rejoint le canal {nom_canal} avec succès.")
-            except mysql.connector.Error as err:
-                print("Erreur lors de la mise à jour de la liste des utilisateurs dans le canal :", err)
-        else:
-            print("Aucun canal sélectionné.")
+    #         try:
+    #             # Mettre à jour la colonne 'liste_utilisateurs' dans la table 'channels'
+    #             self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', %s') WHERE name = %s", (id_utilisateur, nom_canal))
+    #             self.connexion.commit()
+    #             print(f"L'utilisateur {id_utilisateur} a rejoint le canal {nom_canal} avec succès.")
+    #         except mysql.connector.Error as err:
+    #             print("Erreur lors de la mise à jour de la liste des utilisateurs dans le canal :", err)
+    #     else:
+    #         print("Aucun canal sélectionné.")
 
     def envoyer_message(self):
         message = self.saisie_message.get()
