@@ -137,7 +137,7 @@ class Utilisateur(db.Model):
 
     @app.route('/connexion', methods=['POST'])
     def connexion():
-        # data = request.json
+        data = request.json
         # email = data.get('email')
         # mot_de_passe = data.get('password')
 
