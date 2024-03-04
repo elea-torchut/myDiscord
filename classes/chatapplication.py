@@ -78,7 +78,6 @@ class ChatApplication(tk.Tk):
         # Création d'une instance de la classe GestionnaireCanaux
         channel = GestionnaireCanaux()
         if channel.verifier_identification(email, mot_de_passe):
-            self.ouvrir_session(1)
             channel.mainloop()
         else:
             print("Adresse email ou mot de passe invalide")
