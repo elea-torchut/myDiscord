@@ -1,7 +1,6 @@
 import tkinter as tk
 import mysql.connector
 from message import MessageManager
-from user import Utilisateur
 
 class GestionnaireCanaux(tk.Tk):
     def __init__(self):
@@ -9,6 +8,7 @@ class GestionnaireCanaux(tk.Tk):
         self.title("Gestion des canaux Discord")
         self.geometry("800x600")
         self.utilisateur_actuel = None
+        self.email_utilisateur_actuel = None
 
         # Connexion à la base de données MySQL
         self.connexion = mysql.connector.connect(
@@ -74,7 +74,7 @@ class GestionnaireCanaux(tk.Tk):
         self.liste_message = tk.Listbox(self.cadre_message, width=50)
         self.liste_message.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.bouton_deconnexion = tk.Button(self.cadre_message, text="Se déconnecter")
+        self.bouton_deconnexion = tk.Button(self.cadre_message, text="Se déconnecter", command=self.deconnexion_utilisateur)
         self.bouton_deconnexion.pack()
 
         # Création de la combobox pour afficher les canaux disponibles
@@ -246,6 +246,7 @@ class GestionnaireCanaux(tk.Tk):
             utilisateur = self.curseur.fetchone()
             if utilisateur:
                 self.utilisateur_actuel = utilisateur[0]
+                self.email_utilisateur_actuel = email
                 print("Session ouverte pour l'utilisateur avec succès !")
                 return True
             else:
@@ -255,7 +256,38 @@ class GestionnaireCanaux(tk.Tk):
             print("Erreur lors de la vérification de l'identification :", err)
             return False
 
+    
+    def deconnexion_utilisateur(self):
+        # Vous pouvez ajouter ici toute logique de nettoyage ou de traitement de déconnexion nécessaire
 
+        # Par exemple, si vous avez une session ouverte, vous pouvez la fermer
+        self.fermer_session()
+
+        # Vous pouvez également rediriger l'utilisateur vers une page de déconnexion ou une autre page d'accueil
+        self.rediriger_vers_page_accueil_apres_deconnexion()
+
+    def fermer_session(self):
+        # Connexion à la base de données MySQL
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="mydiscord"
+        )
+
+        cursor = connection.cursor()
+        
+        # Exécuter une requête SQL pour mettre à jour la date de dernière déconnexion de l'utilisateur
+        query = "UPDATE users SET session_active = 0 WHERE email = %s"
+        cursor.execute(query, (self.email_utilisateur_actuel,))
+        connection.commit()
+
+        # Fermeture du curseur et de la connexion
+        cursor.close()
+        connection.close()
+
+    def rediriger_vers_page_accueil_apres_deconnexion(self):
+        self.destroy()
 
 
 if __name__ == "__main__":

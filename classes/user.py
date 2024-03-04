@@ -68,10 +68,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
-from mysql.connector import Error
-from mysql.connector import errorcode
-from mysql.connector import connect
-from mysql.connector import pooling
+# from chatapplication import ChatApplication
 
 
 app = Flask(__name__)
@@ -197,11 +194,16 @@ class Utilisateur(db.Model):
 
 
     @app.route('/deconnexion', methods=['POST'])
-    def deconnexion(self):
-        data = request.json
-        email = data.get('email')
-        mot_de_passe = data.get('password')
+    def deconnexion_utilisateur(self):
+        # Vous pouvez ajouter ici toute logique de nettoyage ou de traitement de déconnexion nécessaire
 
+        # Par exemple, si vous avez une session ouverte, vous pouvez la fermer
+        self.fermer_session()
+
+        # Vous pouvez également rediriger l'utilisateur vers une page de déconnexion ou une autre page d'accueil
+        self.rediriger_vers_page_accueil_apres_deconnexion()
+
+    def fermer_session(self):
         # Connexion à la base de données MySQL
         connection = mysql.connector.connect(
             host="localhost",
@@ -211,12 +213,41 @@ class Utilisateur(db.Model):
         )
 
         cursor = connection.cursor()
-
+        
+        # Exécuter une requête SQL pour mettre à jour la date de dernière déconnexion de l'utilisateur
         query = "UPDATE users SET last_logout = NOW() WHERE email = %s"
-        cursor.execute(query, (email,))
+        cursor.execute(query, (self.email,))
+        connection.commit()
+
+        # Fermeture du curseur et de la connexion
         cursor.close()
         connection.close()
-        return jsonify({'message': 'Déconnexion réussie'}), 200
+
+    def rediriger_vers_page_accueil_apres_deconnexion(self):
+        app = ChatApplication()
+        app.mainloop()
+    
+    # @app.route('/deconnexion', methods=['POST'])
+    # def deconnexion(self):
+    #     data = request.json
+    #     email = data.get('email')
+    #     mot_de_passe = data.get('password')
+
+    #     # Connexion à la base de données MySQL
+    #     connection = mysql.connector.connect(
+    #         host="localhost",
+    #         user="root",
+    #         password="root",
+    #         database="mydiscord"
+    #     )
+
+    #     cursor = connection.cursor()
+
+    #     query = "UPDATE users SET last_logout = NOW() WHERE email = %s"
+    #     cursor.execute(query, (email,))
+    #     cursor.close()
+    #     connection.close()
+    #     return jsonify({'message': 'Déconnexion réussie'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
