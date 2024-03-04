@@ -69,14 +69,13 @@ class ChatApplication(tk.Tk):
         self.button_connexion.grid(row=4, column=0, columnspan=2, pady=10)
         self.button_inscription.grid(row=4, column=1, columnspan=2, pady=10)
 
-        
-
     # Méthode pour rediriger l'utilisateur vers la fenêtre de discussion
     def rediriger_vers_discussion(self):
-        self.destroy()  # Fermer la fenêtre actuelle
         email = self.entry_email.get()  # Récupérer l'email saisi par l'utilisateur
         mot_de_passe = self.entry_mot_de_passe.get()  # Récupérer le mot de passe saisi par l'utilisateur
+        self.destroy()  # Fermer la fenêtre actuelle
 
+        # Création d'une instance de la classe GestionnaireCanaux
         channel = GestionnaireCanaux()
         if channel.verifier_identification(email, mot_de_passe):
             self.ouvrir_session(1)
@@ -84,25 +83,53 @@ class ChatApplication(tk.Tk):
         else:
             print("Adresse email ou mot de passe invalide")
 
+    # Méthode pour gérer la connexion de l'utilisateur
+    # def connexion_utilisateur(self):
+    #     email = self.entry_email.get()  # Récupérer l'adresse email saisie par l'utilisateur
+    #     mot_de_passe = self.entry_mot_de_passe.get()  # Récupérer le mot de passe saisi par l'utilisateur
+    #     id_utilisateur = 
+    #     # Création d'une instance de la classe GestionnaireCanaux
+    #     channel = GestionnaireCanaux()
 
-
-    # Méthode pour gérer la connexion de l'utilisateur
-    # Méthode pour gérer la connexion de l'utilisateur
-    # Méthode pour gérer la connexion de l'utilisateur
+    #     # Appel de la méthode verifier_identification de GestionnaireCanaux avec email et mot_de_passe
+    #     if channel.verifier_identification(email, mot_de_passe):
+    #         print("Connexion réussie")
+    #         self.ouvrir_session(id_utilisateur)
+    #         self.rediriger_vers_discussion()
+    #     else:
+    #         print("Adresse email ou mot de passe invalide")
+            
     def connexion_utilisateur(self):
         email = self.entry_email.get()  # Récupérer l'adresse email saisie par l'utilisateur
         mot_de_passe = self.entry_mot_de_passe.get()  # Récupérer le mot de passe saisi par l'utilisateur
 
-        # Création d'une instance de la classe GestionnaireCanaux
-        channel = GestionnaireCanaux()
+        # Connexion à la base de données MySQL
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="mydiscord"
+        )
 
-        # Appel de la méthode verifier_identification de GestionnaireCanaux avec email et mot_de_passe
-        if channel.verifier_identification(email, mot_de_passe):
+        cursor = connection.cursor()
+
+        # Exécuter une requête SQL pour récupérer l'ID de l'utilisateur
+        query = "SELECT id FROM users WHERE email = %s AND password = %s"
+        cursor.execute(query, (email, mot_de_passe))
+        user = cursor.fetchone()  # Récupérer la première ligne résultat
+
+        if user:
+            id_utilisateur = user[0]  # Récupérer l'ID de l'utilisateur
             print("Connexion réussie")
-            self.ouvrir_session([0])
+            self.ouvrir_session(id_utilisateur)  # Passer l'ID de l'utilisateur à la méthode ouvrir_session()
             self.rediriger_vers_discussion()
         else:
             print("Adresse email ou mot de passe invalide")
+
+        # Fermeture du curseur et de la connexion
+        cursor.close()
+        connection.close()
+
 
     def inscrire_utilisateur(self):
         prenom = self.entry_prenom.get()
@@ -132,8 +159,8 @@ class ChatApplication(tk.Tk):
         cursor.close()
         connection.close()
 
-    def ouvrir_session(self, id_utilisateur):
 
+    def ouvrir_session(self, id_utilisateur):
         # Connexion à la base de données MySQL
         self.connexion = mysql.connector.connect(
             host="localhost",
@@ -149,6 +176,24 @@ class ChatApplication(tk.Tk):
             print("Session ouverte pour l'utilisateur avec succès !")
         except mysql.connector.Error as err:
             print("Erreur lors de l'ouverture de la session :", err)
+
+    # def ouvrir_session(self, id_utilisateur):
+
+    #     # Connexion à la base de données MySQL
+    #     self.connexion = mysql.connector.connect(
+    #         host="localhost",
+    #         user="root",
+    #         password="root",
+    #         database="mydiscord"
+    #     )
+    #     self.curseur = self.connexion.cursor()
+    #     try:
+    #         # Mettre à jour la colonne session_active de la table user
+    #         self.curseur.execute("UPDATE users SET session_active = 1 WHERE id = %s", (id_utilisateur,))
+    #         self.connexion.commit()
+    #         print("Session ouverte pour l'utilisateur avec succès !")
+    #     except mysql.connector.Error as err:
+    #         print("Erreur lors de l'ouverture de la session :", err)
 
 
 

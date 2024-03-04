@@ -194,7 +194,8 @@ class GestionnaireCanaux(tk.Tk):
 
         # Mettre à jour la colonne "liste_utilisateurs" dans la table "channels"
         try:
-            self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', ', %s) WHERE name = %s", (id_utilisateur, nom_canal))
+            self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', ', %s) WHERE name = %s", (id_utilisateur, nom_canal) )
+
             self.connexion.commit()
             print(f"L'utilisateur {id_utilisateur} a rejoint le canal {nom_canal} avec succès.")
         except mysql.connector.Error as err:
