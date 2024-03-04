@@ -14,7 +14,7 @@ class GestionnaireCanaux(tk.Tk):
         self.connexion = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root",
+            password="002003",
             database="mydiscord"
         )
         self.curseur = self.connexion.cursor()
@@ -229,14 +229,14 @@ class GestionnaireCanaux(tk.Tk):
         print(message)
         self.etiquette_liste_message
 
-        # self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-        # self.connexion.commit()
+        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+        self.connexion.commit()
 
 
-        # message = MessageManager()
-        # message = self.saisie_message.get()
-        # self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-        # self.connexion.commit()
+        message = MessageManager()
+        message = self.saisie_message.get()
+        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+        self.connexion.commit()
 
         
     # Méthode pour vérifier l'identification de l'utilisateur

@@ -103,7 +103,7 @@ class Utilisateur(db.Model):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root",
+            password="002003",
             database="mydiscord"
         )
 
@@ -174,7 +174,7 @@ class Utilisateur(db.Model):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root",
+            password="002003",
             database="mydiscord"
         )
 
@@ -206,7 +206,7 @@ class Utilisateur(db.Model):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root",
+            password="002003",
             database="mydiscord"
         )
 
