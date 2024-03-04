@@ -98,6 +98,7 @@ class ChatApplication(tk.Tk):
     #     else:
     #         print("Adresse email ou mot de passe invalide")
             
+            
     def connexion_utilisateur(self):
         email = self.entry_email.get()  # Récupérer l'adresse email saisie par l'utilisateur
         mot_de_passe = self.entry_mot_de_passe.get()  # Récupérer le mot de passe saisi par l'utilisateur

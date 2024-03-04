@@ -53,7 +53,7 @@ class GestionnaireCanaux(tk.Tk):
         self.bouton_rejoindre_canal = tk.Button(self.cadre_canal, text="Rejoindre un canal", command=self.rejoindre_canal) 
         self.bouton_rejoindre_canal.pack()
 
-        self.bouton_quitter_canal = tk.Button(self.cadre_canal, text="Quitter un canal")
+        self.bouton_quitter_canal = tk.Button(self.cadre_canal, text="Quitter un canal", command=self.quitter_canal)
         self.bouton_quitter_canal.pack()
 
         self.bouton_actualiser_message = tk.Button(self.cadre_message, text="Actualiser les messages")
@@ -189,17 +189,56 @@ class GestionnaireCanaux(tk.Tk):
         # Récupérer le nom du canal sélectionné dans la liste
         nom_canal = self.liste_canal.get(tk.ACTIVE)
 
-        # Récupérer l'ID de l'utilisateur actuel à partir de votre gestionnaire de canaux
-        id_utilisateur = self.utilisateur_actuel  # Assurez-vous que cela contient l'ID de l'utilisateur actuel
-
-        # Mettre à jour la colonne "liste_utilisateurs" dans la table "channels"
         try:
-            self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', ', %s) WHERE name = %s", (id_utilisateur, nom_canal) )
-
-            self.connexion.commit()
-            print(f"L'utilisateur {id_utilisateur} a rejoint le canal {nom_canal} avec succès.")
+            # Récupérer l'ID du canal à partir de son nom
+            self.curseur.execute("SELECT id FROM channels WHERE name = %s", (nom_canal,))
+            resultat = self.curseur.fetchone()
+            if resultat:
+                channel_id = resultat[0]
+                # Insérer une nouvelle entrée dans la table channel_members
+                self.curseur.execute("INSERT INTO channel_members (channel_id, user_id) VALUES (%s, %s)", (channel_id, self.utilisateur_actuel))
+                self.connexion.commit()
+                print(f"L'utilisateur {self.utilisateur_actuel} a rejoint le canal {nom_canal} avec succès.")
+            else:
+                print("Canal non trouvé.")
         except mysql.connector.Error as err:
-            print("Erreur lors de la mise à jour des utilisateurs dans le canal :", err)
+            print("Erreur lors de l'ajout de l'utilisateur au canal :", err)
+
+    def quitter_canal(self):
+        # Récupérer le nom du canal sélectionné dans la liste
+        nom_canal = self.liste_canal.get(tk.ACTIVE)
+
+        try:
+            # Récupérer l'ID du canal à partir de son nom
+            self.curseur.execute("SELECT id FROM channels WHERE name = %s", (nom_canal,))
+            resultat = self.curseur.fetchone()
+            if resultat:
+                channel_id = resultat[0]
+                # Supprimer l'entrée correspondante de la table channel_members
+                self.curseur.execute("DELETE FROM channel_members WHERE channel_id = %s AND user_id = %s", (channel_id, self.utilisateur_actuel))
+                self.connexion.commit()
+                print(f"L'utilisateur {self.utilisateur_actuel} a quitté le canal {nom_canal} avec succès.")
+            else:
+                print("Canal non trouvé.")
+        except mysql.connector.Error as err:
+            print("Erreur lors de la suppression de l'utilisateur du canal :", err)
+
+
+    # def rejoindre_canal(self):
+    #     # Récupérer le nom du canal sélectionné dans la liste
+    #     nom_canal = self.liste_canal.get(tk.ACTIVE)
+
+    #     # Récupérer l'ID de l'utilisateur actuel à partir de votre gestionnaire de canaux
+    #     id_utilisateur = self.utilisateur_actuel  # Assurez-vous que cela contient l'ID de l'utilisateur actuel
+
+    #     # Mettre à jour la colonne "liste_utilisateurs" dans la table "channels"
+    #     try:
+    #         self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', ', %s) WHERE name = %s", (id_utilisateur, nom_canal) )
+
+    #         self.connexion.commit()
+    #         print(f"L'utilisateur {id_utilisateur} a rejoint le canal {nom_canal} avec succès.")
+    #     except mysql.connector.Error as err:
+    #         print("Erreur lors de la mise à jour des utilisateurs dans le canal :", err)
 
 
     # def rejoindre_canal(self):

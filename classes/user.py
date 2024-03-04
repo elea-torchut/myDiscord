@@ -132,65 +132,65 @@ class Utilisateur(db.Model):
         return jsonify({'message': 'Inscription réussie'}), 201
 
 
-    @app.route('/connexion', methods=['POST'])
-    def connexion():
-        data = request.json
-        # email = data.get('email')
-        # mot_de_passe = data.get('password')
+    # @app.route('/connexion', methods=['POST'])
+    # def connexion():
+    #     data = request.json
+    #     # email = data.get('email')
+    #     # mot_de_passe = data.get('password')
 
-        # # Connexion à la base de données MySQL
-        # connection = mysql.connector.connect(
-        #     host="localhost",
-        #     user="root",
-        #     password="root",
-        #     database="mydiscord"
-        # )
+    #     # # Connexion à la base de données MySQL
+    #     # connection = mysql.connector.connect(
+    #     #     host="localhost",
+    #     #     user="root",
+    #     #     password="root",
+    #     #     database="mydiscord"
+    #     # )
 
-        # cursor = connection.cursor()
+    #     # cursor = connection.cursor()
 
-        # # Récupérer l'utilisateur depuis la base de données
-        # query = "SELECT * FROM users WHERE email = %s"
-        # cursor.execute(query, (email,))
-        # utilisateur = cursor.fetchone()
+    #     # # Récupérer l'utilisateur depuis la base de données
+    #     # query = "SELECT * FROM users WHERE email = %s"
+    #     # cursor.execute(query, (email,))
+    #     # utilisateur = cursor.fetchone()
 
-        # if utilisateur and check_password_hash(utilisateur[4], mot_de_passe):
-        #     query = "UPDATE users SET last_login = NOW() WHERE email = %s"
-        #     cursor.execute(query, (email,))
-        #     cursor.close()
-        #     connection.close()
-        #     return jsonify({'message': 'Connexion réussie'}), 200
-        # else:
-        #     cursor.close()
-        #     connection.close()
-        #     return jsonify({'message': 'Adresse email ou mot de passe invalide'}), 401
+    #     # if utilisateur and check_password_hash(utilisateur[4], mot_de_passe):
+    #     #     query = "UPDATE users SET last_login = NOW() WHERE email = %s"
+    #     #     cursor.execute(query, (email,))
+    #     #     cursor.close()
+    #     #     connection.close()
+    #     #     return jsonify({'message': 'Connexion réussie'}), 200
+    #     # else:
+    #     #     cursor.close()
+    #     #     connection.close()
+    #     #     return jsonify({'message': 'Adresse email ou mot de passe invalide'}), 401
         
-        email = self.entry_email.get()
-        mot_de_passe = self.entry_mot_de_passe.get()
+    #     email = self.entry_email.get()
+    #     mot_de_passe = self.entry_mot_de_passe.get()
 
-        # Connexion à la base de données MySQL
-        connection = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="root",
-            database="mydiscord"
-        )
+    #     # Connexion à la base de données MySQL
+    #     connection = mysql.connector.connect(
+    #         host="localhost",
+    #         user="root",
+    #         password="root",
+    #         database="mydiscord"
+    #     )
 
-        cursor = connection.cursor()
+    #     cursor = connection.cursor()
 
-        # Vérification des informations de connexion dans la base de données
-        query = "SELECT * FROM users WHERE email = %s"
-        cursor.execute(query, (email,))
-        utilisateur = cursor.fetchone()
+    #     # Vérification des informations de connexion dans la base de données
+    #     query = "SELECT * FROM users WHERE email = %s"
+    #     cursor.execute(query, (email,))
+    #     utilisateur = cursor.fetchone()
 
-        if utilisateur and utilisateur[4] == mot_de_passe:
-            print("Connexion réussie")
-            self.rediriger_vers_discussion()
-        else:
-            print("Adresse email ou mot de passe invalide")
+    #     if utilisateur and utilisateur[4] == mot_de_passe:
+    #         print("Connexion réussie")
+    #         self.rediriger_vers_discussion()
+    #     else:
+    #         print("Adresse email ou mot de passe invalide")
 
-        # Fermeture du curseur et de la connexion
-        cursor.close()
-        connection.close()
+    #     # Fermeture du curseur et de la connexion
+    #     cursor.close()
+    #     connection.close()
 
 
     @app.route('/deconnexion', methods=['POST'])
