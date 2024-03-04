@@ -38,8 +38,8 @@ class GestionnaireCanaux(tk.Tk):
         self.liste_canal = tk.Listbox(self.cadre_canal, width=30)
         self.liste_canal.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.bouton_actualiser = tk.Button(self.cadre_canal, text="Actualiser", command=self.rafraichir_canaux)
-        self.bouton_actualiser.pack()
+        # self.bouton_actualiser = tk.Button(self.cadre_canal, text="Actualiser", command=self.rafraichir_canaux)
+        # self.bouton_actualiser.pack()
 
         self.bouton_creer_canal = tk.Button(self.cadre_canal, text="Créer un canal", command=self.creer_fenetre_canal)
         self.bouton_creer_canal.pack()
@@ -77,9 +77,9 @@ class GestionnaireCanaux(tk.Tk):
         self.bouton_deconnexion = tk.Button(self.cadre_message, text="Se déconnecter", command=self.deconnexion_utilisateur)
         self.bouton_deconnexion.pack()
 
-        # Création de la combobox pour afficher les canaux disponibles
-        self.label_liste_canal = tk.Label(self.cadre_canal, text="Liste des canaux disponibles")
-        self.label_liste_canal.pack()
+        # # Création de la combobox pour afficher les canaux disponibles
+        # self.label_liste_canal = tk.Label(self.cadre_canal, text="Liste des canaux disponibles")
+        # self.label_liste_canal.pack()
 
         # Chargement initial des canaux
         self.rafraichir_canaux()
@@ -172,8 +172,8 @@ class GestionnaireCanaux(tk.Tk):
             self.rafraichir_canaux()
 
             # Ajoutez le bouton de modification de canal dans la méthode __init__
-            self.bouton_modifier_canal = tk.Button(self.cadre_canal, text="Modifier un canal", command=self.modifier_canal)
-            self.bouton_modifier_canal.pack()
+            # self.bouton_modifier_canal = tk.Button(self.cadre_canal, text="Modifier un canal", command=self.modifier_canal)
+            # self.bouton_modifier_canal.pack()
 
     def charger_canaux_disponibles(self):
         # Cette méthode charge les canaux disponibles dans la combobox
