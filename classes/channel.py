@@ -38,8 +38,8 @@ class GestionnaireCanaux(tk.Tk):
         self.liste_canal = tk.Listbox(self.cadre_canal, width=30)
         self.liste_canal.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.bouton_actualiser = tk.Button(self.cadre_canal, text="Actualiser", command=self.rafraichir_canaux)
-        self.bouton_actualiser.pack()
+        # self.bouton_actualiser = tk.Button(self.cadre_canal, text="Actualiser", command=self.rafraichir_canaux)
+        # self.bouton_actualiser.pack()
 
         self.bouton_creer_canal = tk.Button(self.cadre_canal, text="Créer un canal", command=self.creer_fenetre_canal)
         self.bouton_creer_canal.pack()
@@ -56,8 +56,8 @@ class GestionnaireCanaux(tk.Tk):
         self.bouton_quitter_canal = tk.Button(self.cadre_canal, text="Quitter un canal", command=self.quitter_canal)
         self.bouton_quitter_canal.pack()
 
-        self.bouton_actualiser_message = tk.Button(self.cadre_message, text="Actualiser les messages")
-        self.bouton_actualiser_message.pack()
+        # self.bouton_actualiser_message = tk.Button(self.cadre_message, text="Actualiser les messages")
+        # self.bouton_actualiser_message.pack()
 
         self.etiquette_message = tk.Label(self.cadre_message, text="Message")
         self.etiquette_message.pack()
@@ -71,8 +71,8 @@ class GestionnaireCanaux(tk.Tk):
         self.etiquette_liste_message = tk.Label(self.cadre_message, text="Messages du canal")
         self.etiquette_liste_message.pack()
 
-        self.liste_message = tk.Listbox(self.cadre_message, width=50)
-        self.liste_message.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # self.liste_message = tk.Listbox(self.cadre_message, width=50)
+        # self.liste_message.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         self.bouton_deconnexion = tk.Button(self.cadre_message, text="Se déconnecter", command=self.deconnexion_utilisateur)
         self.bouton_deconnexion.pack()

@@ -6,8 +6,6 @@ class MessageManager(tk.Tk):
         super().__init__()
         self.title("Gestion des messages Discord")
         self.geometry("800x600")
-        self.title("Gestion des messages Discord")
-        self.geometry("800x600")
 
         # Connexion à la base de données MySQL
         self.conn = mysql.connector.connect(
@@ -18,40 +16,39 @@ class MessageManager(tk.Tk):
         )
         self.cursor = self.conn.cursor()
         
-        # Interface utilisateur
+        # Interface utilisateur pour les messages
         self.message_frame = tk.Frame(self)
         self.message_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        self.message_frame = tk.Frame(self)
-        self.message_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
+        
         self.message_list_label = tk.Label(self.message_frame, text="Messages du canal")
         self.message_list_label.pack()
-        self.message_list_label = tk.Label(self.message_frame, text="Messages du canal")
-        self.message_list_label.pack()
-
+        
         self.message_listbox = tk.Listbox(self.message_frame, width=50)
         self.message_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        self.message_listbox = tk.Listbox(self.message_frame, width=50)
-        self.message_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-        # Chargement initial des messages
+        
         self.rafraichir_messages()
 
-    def refresh_messages(self):
-        # Efface la liste actuelle des messages
-        self.message_listbox.delete(0, tk.END) # Supprime tous les éléments de la liste
+        # Interface utilisateur pour la saisie de messages
+        self.entry_frame = tk.Frame(self)
+        self.entry_frame.pack(side=tk.BOTTOM, fill=tk.X)
+        self.message_entry = tk.Entry(self.entry_frame)
+        self.message_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.send_button = tk.Button(self.entry_frame, text="Envoyer")
+        self.send_button.pack(side=tk.RIGHT)
 
-        # Récupère les messages depuis la base de données
-        messages = self.get_messages() # Récupère les messages depuis la base de données
+        # Bouton pour revenir au menu principal
+        self.return_button = tk.Button(self, text="Revenir au menu principal", command=self.destroy)
+        self.return_button.pack(anchor=tk.NE)
 
-        # Affiche les messages dans la liste
-        for message in messages:
-            self.message_listbox.insert(tk.END, message[0]) # Ajoute le message à la fin de la liste
+    def rafraichir_messages(self):
+        self.message_listbox.delete(0, tk.END)
+        messages = self.recupere_messages()
+        for user_name, content in messages:
+            self.message_listbox.insert(tk.END, f"{user_name}: {content}")
 
-    def get_messages(self):
-        # Récupère les messages depuis la base de données
-        self.cursor.execute("SELECT content FROM messages") # Exécute la requête SQL
-        return self.cursor.fetchall() # Récupère tous les résultats de la requête
+    def recupere_messages(self):
+        self.cursor.execute("SELECT author_id, content FROM messages")
+        return self.cursor.fetchall()
 
 if __name__ == "__main__":
     app = MessageManager()
