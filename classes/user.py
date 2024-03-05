@@ -71,22 +71,23 @@ import mysql.connector
 # from chatapplication import ChatApplication
 
 
-app = Flask(__name__)
+# Initialiser l'application Flask
+app = Flask(__name__) 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost/mydiscord'
 db = SQLAlchemy(app)
 
 class Utilisateur(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True) 
     prenom = db.Column(db.String(50), nullable=False)
     nom = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     mot_de_passe_hash = db.Column(db.String(100), nullable=False)
 
     def definir_mot_de_passe(self, mot_de_passe):
-        self.mot_de_passe_hash = generate_password_hash(mot_de_passe)
+        self.mot_de_passe_hash = generate_password_hash(mot_de_passe) # Génère un hash du mot de passe
 
     def verifier_mot_de_passe(self, mot_de_passe):
-        return check_password_hash(self.mot_de_passe_hash, mot_de_passe)
+        return check_password_hash(self.mot_de_passe_hash, mot_de_passe) # Retourne True si le mot de passe est correct
 
     @app.route('/inscription', methods=['POST'])
     def inscription():
@@ -100,7 +101,7 @@ class Utilisateur(db.Model):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="002003",
+            password="root",
             database="mydiscord"
         )
 
@@ -208,7 +209,7 @@ class Utilisateur(db.Model):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="002003",
+            password="root",
             database="mydiscord"
         )
 
@@ -237,7 +238,7 @@ class Utilisateur(db.Model):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="002003",
+            password="root",
             database="mydiscord"
         )
 

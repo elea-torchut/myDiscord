@@ -14,7 +14,7 @@ class GestionnaireCanaux(tk.Tk):
         self.connexion = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="002003",
+            password="root",
             database="mydiscord"
         )
         self.curseur = self.connexion.cursor()
