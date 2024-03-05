@@ -1,20 +1,17 @@
-# main.py
+#main.py
+
 from chatapplication import ChatApplication
-from user import Utilisateur
-from channel import ChannelManager
+from channel import GestionnaireCanaux
 from message import MessageManager
 
-# Créer une instance de l'application de chat
-app = ChatApplication()
+if __name__ == "__main__":
+    app = ChatApplication()
+    app.mainloop()
+    if app.connexion_utilisateur:
+        app = GestionnaireCanaux(app.utilisateur_actuel)
+        app.mainloop()
+        if app.utilisateur_actuel:
+            app = MessageManager(app.utilisateur_actuel)
+            app.mainloop()
 
-# Créer une instance de la gestion des utilisateurs
-user_manager = Utilisateur()
-
-# Créer une instance de la gestion des canaux
-channel_manager = ChannelManager()
-
-# Créer une instance de la gestion des messages
-message_manager = MessageManager()
-
-# Lancer l'application de chat
-app.mainloop()
+  
