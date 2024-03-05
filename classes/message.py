@@ -51,16 +51,16 @@ class MessageManager(tk.Tk):
         return self.cursor.fetchall()
     
     def envoyer_message(self): 
-        message = self.saisie_message.get()
+        message = self.saisie_message.get() # Récupère le message saisi par l'utilisateur
         print(message)
-        self.etiquette_liste_message
+        self.etiquette_liste_message # Affiche le message dans l'interface utilisateur
 
         self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-        self.connexion.commit()
+        self.connexion.commit() # Enregistre le message dans la base de données
 
 
-        message = MessageManager()
-        message = self.saisie_message.get()
+        message = MessageManager() # Crée une instance de la classe MessageManager
+        message = self.saisie_message.get() # Récupère le message saisi par l'utilisateur
         self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
         self.connexion.commit()
     

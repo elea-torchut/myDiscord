@@ -59,13 +59,13 @@ class GestionnaireCanaux(tk.Tk):
         # self.bouton_actualiser_message = tk.Button(self.cadre_message, text="Actualiser les messages")
         # self.bouton_actualiser_message.pack()
 
-        self.etiquette_message = tk.Label(self.cadre_message, text="Message")
-        self.etiquette_message.pack()
+        # self.etiquette_message = tk.Label(self.cadre_message, text="Message")
+        # self.etiquette_message.pack()
 
         self.saisie_message = tk.Entry(self.cadre_message)
-        self.saisie_message.pack()
+        # self.saisie_message.pack()
         
-        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message", command=self.envoyer_message)
+        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message sur le canal", command=self.envoyer_message)
         self.bouton_envoyer_message.pack()
 
         self.etiquette_liste_message = tk.Label(self.cadre_message, text="Messages du canal")
@@ -77,9 +77,9 @@ class GestionnaireCanaux(tk.Tk):
         self.bouton_deconnexion = tk.Button(self.cadre_message, text="Se déconnecter", command=self.deconnexion_utilisateur)
         self.bouton_deconnexion.pack()
 
-        # Création de la combobox pour afficher les canaux disponibles
-        self.label_liste_canal = tk.Label(self.cadre_canal, text="Liste des canaux disponibles")
-        self.label_liste_canal.pack()
+        # # Création de la combobox pour afficher les canaux disponibles
+        # self.label_liste_canal = tk.Label(self.cadre_canal, text="Liste des canaux disponibles")
+        # self.label_liste_canal.pack()
 
         # Chargement initial des canaux
         self.rafraichir_canaux()
@@ -263,19 +263,19 @@ class GestionnaireCanaux(tk.Tk):
     #     else:
     #         print("Aucun canal sélectionné.")
 
-    # def envoyer_message(self):
-    #     message = self.saisie_message.get()
-    #     print(message)
-    #     self.etiquette_liste_message
+    def envoyer_message(self): 
+        message = self.saisie_message.get() # Récupère le message saisi par l'utilisateur
+        print(message)
+        self.etiquette_liste_message # Affiche le message dans l'interface utilisateur
 
-    #     self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-    #     self.connexion.commit()
+        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+        self.connexion.commit() # Enregistre le message dans la base de données
 
 
-    #     message = MessageManager()
-    #     message = self.saisie_message.get()
-    #     self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-    #     self.connexion.commit()
+        message = MessageManager() # Crée une instance de la classe MessageManager
+        message = self.saisie_message.get() # Récupère le message saisi par l'utilisateur
+        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+        self.connexion.commit()
 
         
     # Méthode pour vérifier l'identification de l'utilisateur
