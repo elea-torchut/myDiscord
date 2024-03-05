@@ -9,7 +9,7 @@ if __name__ == "__main__":
     app.mainloop()
     if app.connexion_utilisateur:
         app = GestionnaireCanaux(app.utilisateur_actuel)
-        app.mainloop()
+        app.
         if app.utilisateur_actuel:
             app = MessageManager(app.utilisateur_actuel)
             app.mainloop()

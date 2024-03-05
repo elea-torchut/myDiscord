@@ -264,18 +264,36 @@ class GestionnaireCanaux(tk.Tk):
     #         print("Aucun canal sélectionné.")
 
     def envoyer_message(self):
+        self.conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="mydiscord"
+        )
+        self.cursor = self.conn.cursor()
+        msg = MessageManager
         message = self.saisie_message.get()
+        author_id = (f"SELECT first_name FROM users WHERE email = %s", (self.email_utilisateur_actuel,))
         print(message)
-        self.etiquette_liste_message
+        self.saisie_message.delete(0, tk.END)
+        self.cursor.execute("INSERT INTO messages (author_id, content) VALUES (%s, %s)")
+        self.conn.commit()
+        self.msg.rafraichir_messages()
+        self.bouton_envoyer_message
 
-        # self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-        # self.connexion.commit()
+    # def envoyer_message(self):
+    #     message = self.saisie_message.get()
+    #     print(message)
+    #     self.etiquette_liste_message
+
+    #     self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+    #     self.connexion.commit()
 
 
-        # message = MessageManager()
-        # message = self.saisie_message.get()
-        # self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-        # self.connexion.commit()
+    #     message = MessageManager()
+    #     message = self.saisie_message.get()
+    #     self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+    #     self.connexion.commit()
 
         
     # Méthode pour vérifier l'identification de l'utilisateur
