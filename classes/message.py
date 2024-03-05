@@ -1,6 +1,6 @@
 import tkinter as tk
 import mysql.connector
-# from channel import GestionnaireCanaux
+from channel import GestionnaireCanaux
 
 class MessageManager(tk.Tk):
     def __init__(self):
@@ -42,16 +42,52 @@ class MessageManager(tk.Tk):
         self.return_button.pack(anchor=tk.NE)
 
     def rafraichir_messages(self):
+        # Efface tous les messages actuellement affichés
         self.message_listbox.delete(0, tk.END)
+
+        # Récupère une nouvelle liste de messages
         messages = self.recupere_messages()
+
+        # Insère chaque message dans message_listbox
         for user_name, content in messages:
-            self.message_listbox.insert(tk.END, f"{user_name}: {content}")
+            message_text = f"{user_name}: {content}"
+            self.message_listbox.insert(tk.END, message_text)
+
+
+    # def rafraichir_messages(self):
+    #     self.message_listbox.delete(0, tk.END)
+    #     messages = self.recupere_messages()
+    #     for user_name, content in messages:
+    #         self.message_listbox.insert(tk.END, f"{user_name}: {content}")
 
     def recupere_messages(self):
         self.cursor.execute("SELECT author_id, content FROM messages")
         return self.cursor.fetchall()
     
     def envoyer_message(self):
+        self.conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="mydiscord"
+        )
+        self.cursor = self.conn.cursor()
+        canal = GestionnaireCanaux()
+        msg = MessageManager
+        message = canal.saisie_message.get()
+        author_id_query = "SELECT first_name FROM users WHERE email = %s"
+        self.cursor.execute(author_id_query, (self.email_utilisateur_actuel,))
+        author_id = self.cursor.fetchone()[0]  # Assuming it returns one row
+
+        print(message)
+        canal.saisie_message.delete(0, tk.END)
+        insert_query = "INSERT INTO messages (author_id, content) VALUES (%s, %s)"
+        self.cursor.execute(insert_query, (author_id, message,))
+        self.conn.commit()
+        msg.rafraichir_messages()
+        canal.bouton_envoyer_message.invoke()
+
+    def envoyer_message1(self):
         message = self.message_entry.get()
         author_id = (f"SELECT first_name FROM users WHERE email = %s")
         print(message)

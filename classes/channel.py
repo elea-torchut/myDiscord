@@ -1,6 +1,6 @@
 import tkinter as tk
 import mysql.connector
-from message import MessageManager
+# from message import MessageManager
 
 class GestionnaireCanaux(tk.Tk):
     def __init__(self):
@@ -263,23 +263,47 @@ class GestionnaireCanaux(tk.Tk):
     #     else:
     #         print("Aucun canal sélectionné.")
 
-    def envoyer_message(self):
-        self.conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="root",
-            database="mydiscord"
-        )
-        self.cursor = self.conn.cursor()
-        msg = MessageManager
-        message = self.saisie_message.get()
-        author_id = (f"SELECT first_name FROM users WHERE email = %s", (self.email_utilisateur_actuel,))
-        print(message)
-        self.saisie_message.delete(0, tk.END)
-        self.cursor.execute("INSERT INTO messages (author_id, content) VALUES (%s, %s)")
-        self.conn.commit()
-        self.msg.rafraichir_messages()
-        self.bouton_envoyer_message
+    # def envoyer_message(self):
+    #     self.conn = mysql.connector.connect(
+    #         host="localhost",
+    #         user="root",
+    #         password="root",
+    #         database="mydiscord"
+    #     )
+    #     self.cursor = self.conn.cursor()
+    #     msg = MessageManager
+    #     message = self.saisie_message.get()
+    #     author_id_query = "SELECT first_name FROM users WHERE email = %s"
+    #     self.cursor.execute(author_id_query, (self.email_utilisateur_actuel,))
+    #     author_id = self.cursor.fetchone()[0]  # Assuming it returns one row
+
+    #     print(message)
+    #     self.saisie_message.delete(0, tk.END)
+    #     insert_query = "INSERT INTO messages (author_id, content) VALUES (%s, %s)"
+    #     self.cursor.execute(insert_query, (author_id, message,))
+    #     self.conn.commit()
+    #     msg.rafraichir_messages()
+    #     self.bouton_envoyer_message.invoke()
+
+
+
+    # def envoyer_message(self):
+    #     self.conn = mysql.connector.connect(
+    #         host="localhost",
+    #         user="root",
+    #         password="root",
+    #         database="mydiscord"
+    #     )
+    #     self.cursor = self.conn.cursor()
+    #     msg = MessageManager
+    #     message = self.saisie_message.get()
+    #     author_id = (f"SELECT first_name FROM users WHERE email = %s", (self.email_utilisateur_actuel,))
+    #     print(message)
+    #     self.saisie_message.delete(0, tk.END)
+    #     self.cursor.execute("INSERT INTO messages (author_id, content) VALUES (%s, %s)", (author_id, message,))
+    #     self.conn.commit()
+    #     msg.rafraichir_messages()
+    #     self.bouton_envoyer_message
 
     # def envoyer_message(self):
     #     message = self.saisie_message.get()
