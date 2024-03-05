@@ -49,6 +49,21 @@ class MessageManager(tk.Tk):
     def recupere_messages(self):
         self.cursor.execute("SELECT author_id, content FROM messages")
         return self.cursor.fetchall()
+    
+    def envoyer_message(self): 
+        message = self.saisie_message.get()
+        print(message)
+        self.etiquette_liste_message
+
+        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+        self.connexion.commit()
+
+
+        message = MessageManager()
+        message = self.saisie_message.get()
+        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+        self.connexion.commit()
+    
 
 if __name__ == "__main__":
     app = MessageManager()

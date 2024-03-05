@@ -263,19 +263,19 @@ class GestionnaireCanaux(tk.Tk):
     #     else:
     #         print("Aucun canal sélectionné.")
 
-    def envoyer_message(self):
-        message = self.saisie_message.get()
-        print(message)
-        self.etiquette_liste_message
+    # def envoyer_message(self):
+    #     message = self.saisie_message.get()
+    #     print(message)
+    #     self.etiquette_liste_message
 
-        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-        self.connexion.commit()
+    #     self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+    #     self.connexion.commit()
 
 
-        message = MessageManager()
-        message = self.saisie_message.get()
-        self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-        self.connexion.commit()
+    #     message = MessageManager()
+    #     message = self.saisie_message.get()
+    #     self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
+    #     self.connexion.commit()
 
         
     # Méthode pour vérifier l'identification de l'utilisateur
@@ -310,7 +310,7 @@ class GestionnaireCanaux(tk.Tk):
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root",
+            password="002003",
             database="mydiscord"
         )
 
