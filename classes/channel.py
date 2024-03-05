@@ -1,6 +1,6 @@
 import tkinter as tk
 import mysql.connector
-# from message import MessageManager
+from message import MessageManager
 
 class GestionnaireCanaux(tk.Tk):
     def __init__(self):
@@ -65,7 +65,7 @@ class GestionnaireCanaux(tk.Tk):
         self.saisie_message = tk.Entry(self.cadre_message)
         self.saisie_message.pack()
         
-        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message", command=self.acceder_au_canal)
+        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message", command=self.acceder_a_la_messagerie_du_canal)
         self.bouton_envoyer_message.pack()
 
         self.etiquette_liste_message = tk.Label(self.cadre_message, text="Messages du canal")
@@ -223,15 +223,31 @@ class GestionnaireCanaux(tk.Tk):
         except mysql.connector.Error as err:
             print("Erreur lors de la suppression de l'utilisateur du canal :", err)
 
-    def acceder_au_canal(self):
-        # Récupérer le nom du canal sélectionné dans la liste
-        nom_canal = self.liste_canal.get(tk.ACTIVE)
+    def acceder_a_la_messagerie_du_canal(self):
+        try:
+            # Récupérer le nom du canal sélectionné dans la liste
+            nom_canal = self.liste_canal.get(tk.ACTIVE)
 
-        # Vous pouvez ajouter ici toute logique pour accéder au canal sélectionné
-        # Par exemple, déclencher un événement pour informer la classe principale du canal sélectionné
-        self.event_generate("<ChannelSelected>", channel_name=nom_canal)
+            # Vérifier si un canal est sélectionné
+            if nom_canal:
+                # Créer une nouvelle instance de la classe MessageManager
+                fenetre_messages = MessageManager()
 
+                # Récupérer l'identifiant du canal à partir de son nom
+                self.curseur.execute("SELECT id FROM channels WHERE name = %s", (nom_canal,))
+                canal_id = self.curseur.fetchone()[0]
 
+                # Passer l'identifiant du canal à la fenêtre de gestion des messages
+                fenetre_messages.charger_messages_du_canal(canal_id)
+
+                # Afficher la fenêtre de gestion des messages
+                fenetre_messages.mainloop()
+            else:
+                print("Aucun canal sélectionné.")
+        except mysql.connector.Error as err:
+            print("Erreur lors de l'accès à la messagerie du canal :", err)
+
+        
 
 
     # def rejoindre_canal(self):
