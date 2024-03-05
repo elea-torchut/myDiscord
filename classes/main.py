@@ -7,11 +7,8 @@ from message import MessageManager
 if __name__ == "__main__":
     app = ChatApplication()
     app.mainloop()
-    if app.connexion_utilisateur:
-        app = GestionnaireCanaux(app.utilisateur_actuel)
-        app.
-        if app.utilisateur_actuel:
-            app = MessageManager(app.utilisateur_actuel)
-            app.mainloop()
 
-  
+    if app.connexion_utilisateur():
+        canal = GestionnaireCanaux()
+        msg = MessageManager()
+        canal.mainloop()  # Vous devez lancer la boucle principale du gestionnaire de canaux

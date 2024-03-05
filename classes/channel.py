@@ -65,7 +65,7 @@ class GestionnaireCanaux(tk.Tk):
         self.saisie_message = tk.Entry(self.cadre_message)
         self.saisie_message.pack()
         
-        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message", command=self.envoyer_message)
+        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message", command=self.acceder_au_canal)
         self.bouton_envoyer_message.pack()
 
         self.etiquette_liste_message = tk.Label(self.cadre_message, text="Messages du canal")
@@ -222,6 +222,16 @@ class GestionnaireCanaux(tk.Tk):
                 print("Canal non trouvé.")
         except mysql.connector.Error as err:
             print("Erreur lors de la suppression de l'utilisateur du canal :", err)
+
+    def acceder_au_canal(self):
+        # Récupérer le nom du canal sélectionné dans la liste
+        nom_canal = self.liste_canal.get(tk.ACTIVE)
+
+        # Vous pouvez ajouter ici toute logique pour accéder au canal sélectionné
+        # Par exemple, déclencher un événement pour informer la classe principale du canal sélectionné
+        self.event_generate("<ChannelSelected>", channel_name=nom_canal)
+
+
 
 
     # def rejoindre_canal(self):

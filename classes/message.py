@@ -72,22 +72,22 @@ class MessageManager(tk.Tk):
             database="mydiscord"
         )
         self.cursor = self.conn.cursor()
-        canal = GestionnaireCanaux()
+        
         msg = MessageManager
-        message = canal.saisie_message.get()
+        message = self.message_entry.get()
         author_id_query = "SELECT first_name FROM users WHERE email = %s"
         self.cursor.execute(author_id_query, (self.email_utilisateur_actuel,))
         author_id = self.cursor.fetchone()[0]  # Assuming it returns one row
 
         print(message)
-        canal.saisie_message.delete(0, tk.END)
+        self.message_entry.delete(0, tk.END)
         insert_query = "INSERT INTO messages (author_id, content) VALUES (%s, %s)"
         self.cursor.execute(insert_query, (author_id, message,))
         self.conn.commit()
         msg.rafraichir_messages()
-        canal.bouton_envoyer_message.invoke()
+        self.send_button.invoke()
 
-    def envoyer_message1(self):
+    def envoyer_message(self):
         message = self.message_entry.get()
         author_id = (f"SELECT first_name FROM users WHERE email = %s")
         print(message)
