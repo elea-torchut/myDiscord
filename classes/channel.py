@@ -49,7 +49,7 @@ class GestionnaireCanaux(tk.Tk):
     def creer_boutons(self, cadre):
         # Liste des tuples (texte du bouton, méthode associée)
         actions = [
-            ("Actualiser", self.rafraichir_canaux),
+            # ("Actualiser", self.rafraichir_canaux),
             ("Créer un canal", self.creer_fenetre_canal),
             ("Supprimer un canal", self.supprimer_canal),
             ("Modifier un canal", self.modifier_canal),
@@ -108,15 +108,22 @@ class GestionnaireCanaux(tk.Tk):
         bouton_enregistrer.pack() 
 
     def supprimer_canal(self):
-        # Récupère le nom du canal sélectionné dans la liste
         nom_canal = self.liste_canal.get(tk.ACTIVE)
+        if nom_canal:
+            try:
+                # Supprimer d'abord les messages associés au canal
+                self.curseur.execute("SELECT id FROM channels WHERE name = %s", (nom_canal,))
+                canal_id = self.curseur.fetchone()
+                if canal_id:
+                    # Convert canal_id from tuple format if not done already
+                    canal_id_value = canal_id[0]
+                    self.curseur.execute("DELETE FROM messages WHERE channel_id = %s", (canal_id_value,))
+                    self.curseur.execute("DELETE FROM channels WHERE id = %s", (canal_id_value,))
+                    self.connexion.commit()
+                    self.rafraichir_canaux()
+            except mysql.connector.Error as err:
+                print("Erreur lors de la suppression du canal :", err)
 
-        # Exécute la requête SQL pour supprimer le canal de la base de données
-        self.curseur.execute("DELETE FROM channels WHERE name = %s", (nom_canal,))
-        self.connexion.commit()
-
-        # Rafraîchit la liste des canaux pour refléter les changements
-        self.rafraichir_canaux()
 
     def modifier_canal(self):
         # Récupère le nom du canal sélectionné dans la liste

@@ -63,17 +63,17 @@ class MessageManager(tk.Tk):
 
 
     def recupere_messages(self):
-        # Cette requête SQL joint les tables users et messages pour récupérer le prénom de l'utilisateur et le contenu de chaque message.
-        # Assurez-vous que 'self.nom_canal' est correctement défini et correspond au nom du canal actuel.
         query = """
             SELECT u.first_name, m.content
             FROM messages m
             INNER JOIN users u ON m.author_id = u.id
             INNER JOIN channels c ON m.channel_id = c.id
             WHERE c.name = %s
+            ORDER BY m.timestamp ASC  # Ajoutez ceci pour trier par timestamp
         """
         self.cursor.execute(query, (self.nom_canal,))
         return self.cursor.fetchall()
+
 
     
     def envoyer_message(self):
