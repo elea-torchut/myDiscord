@@ -28,8 +28,8 @@ class MessageManager(tk.Tk):
         self.canal_label.pack()
 
 
-        self.canal_label = tk.Label(self.message_frame, text=f"Canal: {self.nom_canal}")
-        self.canal_label.pack() 
+        # self.canal_label = tk.Label(self.message_frame, text=f"Canal: {self.nom_canal}")
+        # self.canal_label.pack() 
         
         self.message_frame = tk.Frame(self)
         self.message_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)

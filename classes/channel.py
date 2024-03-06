@@ -55,7 +55,7 @@ class GestionnaireCanaux(tk.Tk):
             ("Modifier un canal", self.modifier_canal),
             ("Rejoindre un canal", self.rejoindre_canal),
             ("Quitter un canal", self.quitter_canal),
-            ("Rejoindre canal", self.acceder_a_la_messagerie_du_canal),
+            ("Accéder au canal", self.acceder_a_la_messagerie_du_canal),
             ("Se déconnecter", self.deconnexion_utilisateur)
         ]
 

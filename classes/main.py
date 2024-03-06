@@ -11,4 +11,4 @@ if __name__ == "__main__":
     if app.connexion_utilisateur():
         canal = GestionnaireCanaux()
         msg = MessageManager()
-        canal.mainloop()  # Vous devez lancer la boucle principale du gestionnaire de canaux
+        canal.mainloop()  
