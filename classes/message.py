@@ -1,6 +1,6 @@
 import tkinter as tk
 import mysql.connector
-# from channel import GestionnaireCanaux
+
 
 class MessageManager(tk.Tk):
     def __init__(self):
@@ -54,12 +54,6 @@ class MessageManager(tk.Tk):
             self.message_listbox.insert(tk.END, message_text)
 
 
-    # def rafraichir_messages(self):
-    #     self.message_listbox.delete(0, tk.END)
-    #     messages = self.recupere_messages()
-    #     for user_name, content in messages:
-    #         self.message_listbox.insert(tk.END, f"{user_name}: {content}")
-
     def recupere_messages(self):
         self.cursor.execute("SELECT author_id, content FROM messages")
         return self.cursor.fetchall()
@@ -79,6 +73,13 @@ class MessageManager(tk.Tk):
             author_id_query = "SELECT id FROM users WHERE email = %s"
             cursor.execute(author_id_query, (self.email_utilisateur_actuel,))
             author_id = cursor.fetchone()[0]
+            
+            # Récupération du nom de l'utilisateur actuel
+            user_name_query = "SELECT first_name FROM users WHERE email = %s"
+            cursor.execute(user_name_query, (self.email_utilisateur_actuel,))
+            user_name = cursor.fetchone()[0]
+            print(user_name)
+            
 
             # Récupération de l'ID du canal actuel
             channel_id_query = "SELECT id FROM channels WHERE name = %s"
@@ -110,7 +111,7 @@ class MessageManager(tk.Tk):
 
     def envoyer_message(self):
         message = self.message_entry.get()
-        author_id = (f"SELECT first_name FROM users WHERE email = %s")
+        author_name = (f"SELECT first_name FROM users WHERE email = %s")
         print(message)
         self.message_entry.delete(0, tk.END)
         self.cursor.execute(f"INSERT INTO messages (author_id, content) VALUES (1, '{message}')")

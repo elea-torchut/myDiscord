@@ -81,22 +81,6 @@ class ChatApplication(tk.Tk):
             channel.mainloop()
         else:
             print("Adresse email ou mot de passe invalide")
-
-    # Méthode pour gérer la connexion de l'utilisateur
-    # def connexion_utilisateur(self):
-    #     email = self.entry_email.get()  # Récupérer l'adresse email saisie par l'utilisateur
-    #     mot_de_passe = self.entry_mot_de_passe.get()  # Récupérer le mot de passe saisi par l'utilisateur
-    #     id_utilisateur = 
-    #     # Création d'une instance de la classe GestionnaireCanaux
-    #     channel = GestionnaireCanaux()
-
-    #     # Appel de la méthode verifier_identification de GestionnaireCanaux avec email et mot_de_passe
-    #     if channel.verifier_identification(email, mot_de_passe):
-    #         print("Connexion réussie")
-    #         self.ouvrir_session(id_utilisateur)
-    #         self.rediriger_vers_discussion()
-    #     else:
-    #         print("Adresse email ou mot de passe invalide")
             
             
     def connexion_utilisateur(self):
@@ -143,7 +127,6 @@ class ChatApplication(tk.Tk):
             user="root",
             password="root", 
             database="mydiscord" 
-
         )
 
         cursor = connection.cursor()
@@ -152,8 +135,8 @@ class ChatApplication(tk.Tk):
         query = "INSERT INTO users (first_name, last_name, email, password) VALUES (%s, %s, %s, %s)"
         cursor.execute(query, (prenom, nom, email, mot_de_passe))
         connection.commit()
-
-        print("Inscription réussie")
+        print("Inscription réussie, nom :", prenom, "email :", email, "mot de passe :", mot_de_passe)
+        
 
         # Fermeture du curseur et de la connexion
         cursor.close()
@@ -161,39 +144,30 @@ class ChatApplication(tk.Tk):
 
 
     def ouvrir_session(self, id_utilisateur):
-        # Connexion à la base de données MySQL
-        self.connexion = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="root",
-            database="mydiscord"
-        )
-        self.curseur = self.connexion.cursor()
-        try:
-            # Mettre à jour la colonne session_active de la table user
-            self.curseur.execute("UPDATE users SET session_active = 1 WHERE id = %s", (id_utilisateur,))
-            self.connexion.commit()
-            print("Session ouverte pour l'utilisateur avec succès !")
-        except mysql.connector.Error as err:
-            print("Erreur lors de l'ouverture de la session :", err)
+            # Connexion à la base de données MySQL
+            self.connexion = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="root",
+                database="mydiscord"
+            )
+            self.curseur = self.connexion.cursor()
+            self.id_utilisateur = id_utilisateur
+            try:
+                # Mettre à jour la colonne session_active de la table users
+                self.curseur.execute("UPDATE users SET session_active = 1 WHERE id = %s", (id_utilisateur,))
+                self.connexion.commit()
 
-    # def ouvrir_session(self, id_utilisateur):
+                # Récupérer le prénom de l'utilisateur
+                self.curseur.execute("SELECT first_name FROM users WHERE id = %s", (id_utilisateur,))
+                user = self.curseur.fetchone()  # Cela récupère la première ligne du résultat
+                if user:  # Vérifie si un utilisateur a été trouvé
+                    print("Session ouverte pour l'utilisateur", user[0])
+                else:
+                    print("Aucun utilisateur trouvé avec l'ID", id_utilisateur)
+            except mysql.connector.Error as err:
+                print("Erreur lors de l'ouverture de la session :", err)
 
-    #     # Connexion à la base de données MySQL
-    #     self.connexion = mysql.connector.connect(
-    #         host="localhost",
-    #         user="root",
-    #         password="root",
-    #         database="mydiscord"
-    #     )
-    #     self.curseur = self.connexion.cursor()
-    #     try:
-    #         # Mettre à jour la colonne session_active de la table user
-    #         self.curseur.execute("UPDATE users SET session_active = 1 WHERE id = %s", (id_utilisateur,))
-    #         self.connexion.commit()
-    #         print("Session ouverte pour l'utilisateur avec succès !")
-    #     except mysql.connector.Error as err:
-    #         print("Erreur lors de l'ouverture de la session :", err)
 
 
 

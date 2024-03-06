@@ -77,10 +77,6 @@ class GestionnaireCanaux(tk.Tk):
         self.bouton_deconnexion = tk.Button(self.cadre_message, text="Se déconnecter", command=self.deconnexion_utilisateur)
         self.bouton_deconnexion.pack()
 
-        # # Création de la combobox pour afficher les canaux disponibles
-        # self.label_liste_canal = tk.Label(self.cadre_canal, text="Liste des canaux disponibles")
-        # self.label_liste_canal.pack()
-
         # Chargement initial des canaux
         self.rafraichir_canaux()
 
@@ -171,9 +167,6 @@ class GestionnaireCanaux(tk.Tk):
             # Rafraîchit la liste des canaux pour refléter les changements
             self.rafraichir_canaux()
 
-            # Ajoutez le bouton de modification de canal dans la méthode __init__
-            # self.bouton_modifier_canal = tk.Button(self.cadre_canal, text="Modifier un canal", command=self.modifier_canal)
-            # self.bouton_modifier_canal.pack()
 
     def charger_canaux_disponibles(self):
         # Cette méthode charge les canaux disponibles dans la combobox
@@ -195,14 +188,24 @@ class GestionnaireCanaux(tk.Tk):
             resultat = self.curseur.fetchone()
             if resultat:
                 channel_id = resultat[0]
+
+                # Vérifier si l'utilisateur est déjà membre du canal
+                self.curseur.execute("SELECT * FROM channel_members WHERE channel_id = %s AND user_id = %s", (channel_id, self.utilisateur_actuel))
+                if self.curseur.fetchone():
+                    print(f"L'utilisateur {self.utilisateur_actuel} est déjà membre du canal {nom_canal}.")
+                    return
+
                 # Insérer une nouvelle entrée dans la table channel_members
                 self.curseur.execute("INSERT INTO channel_members (channel_id, user_id) VALUES (%s, %s)", (channel_id, self.utilisateur_actuel))
                 self.connexion.commit()
                 print(f"L'utilisateur {self.utilisateur_actuel} a rejoint le canal {nom_canal} avec succès.")
+                print(f"ID du canal : {channel_id}")
+
             else:
                 print("Canal non trouvé.")
         except mysql.connector.Error as err:
             print("Erreur lors de l'ajout de l'utilisateur au canal :", err)
+
 
     def quitter_canal(self):
         # Récupérer le nom du canal sélectionné dans la liste
@@ -238,7 +241,13 @@ class GestionnaireCanaux(tk.Tk):
                 canal_id = self.curseur.fetchone()[0]
 
                 # Passer l'identifiant du canal à la fenêtre de gestion des messages
-                fenetre_messages.charger_messages_du_canal(canal_id)
+                fenetre_messages.charger_messages_du_canal(canal_id)    
+
+                # Passer l'identifiant de l'utilisateur actuel à la fenêtre de gestion des messages
+                fenetre_messages.utilisateur_actuel = self.utilisateur_actuel
+
+                # Passer l'adresse e-mail de l'utilisateur actuel à la fenêtre de gestion des messages
+                fenetre_messages.email_utilisateur_actuel = self.email_utilisateur_actuel
 
                 # Afficher la fenêtre de gestion des messages
                 fenetre_messages.mainloop()
@@ -247,114 +256,35 @@ class GestionnaireCanaux(tk.Tk):
         except mysql.connector.Error as err:
             print("Erreur lors de l'accès à la messagerie du canal :", err)
 
-        
+    def charger_messages_du_canal(self, canal_id):
+        try:
+            # Récupérer les messages du canal à partir de son identifiant
+            self.curseur.execute("SELECT author_id, content FROM messages WHERE channel_id = %s", (canal_id,))
+            messages = self.curseur.fetchall()
 
+            # Insérer chaque message dans la liste des messages
+            for author_id, content in messages:
+                # Récupérer le nom de l'auteur du message
+                self.curseur.execute("SELECT first_name FROM users WHERE id = %s", (author_id,))
+                user_name = self.curseur.fetchone()[0]
 
-    # def rejoindre_canal(self):
-    #     # Récupérer le nom du canal sélectionné dans la liste
-    #     nom_canal = self.liste_canal.get(tk.ACTIVE)
-
-    #     # Récupérer l'ID de l'utilisateur actuel à partir de votre gestionnaire de canaux
-    #     id_utilisateur = self.utilisateur_actuel  # Assurez-vous que cela contient l'ID de l'utilisateur actuel
-
-    #     # Mettre à jour la colonne "liste_utilisateurs" dans la table "channels"
-    #     try:
-    #         self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', ', %s) WHERE name = %s", (id_utilisateur, nom_canal) )
-
-    #         self.connexion.commit()
-    #         print(f"L'utilisateur {id_utilisateur} a rejoint le canal {nom_canal} avec succès.")
-    #     except mysql.connector.Error as err:
-    #         print("Erreur lors de la mise à jour des utilisateurs dans le canal :", err)
-
-
-    # def rejoindre_canal(self):
-    #     # Récupérer l'indice de l'élément sélectionné dans la liste des canaux
-    #     indice_selectionne = self.liste_canal.curselection()
-        
-    #     # Vérifier si un élément est sélectionné
-    #     if indice_selectionne:
-    #         # Récupérer le nom du canal à partir de l'indice sélectionné
-    #         nom_canal = self.liste_canal.get(indice_selectionne[0])
-
-    #         # Récupérer l'ID de l'utilisateur actuel
-    #         id_utilisateur = self.utilisateur_actuel
-
-    #         try:
-    #             # Mettre à jour la colonne 'liste_utilisateurs' dans la table 'channels'
-    #             self.curseur.execute("UPDATE channels SET liste_utilisateurs = CONCAT(liste_utilisateurs, ', %s') WHERE name = %s", (id_utilisateur, nom_canal))
-    #             self.connexion.commit()
-    #             print(f"L'utilisateur {id_utilisateur} a rejoint le canal {nom_canal} avec succès.")
-    #         except mysql.connector.Error as err:
-    #             print("Erreur lors de la mise à jour de la liste des utilisateurs dans le canal :", err)
-    #     else:
-    #         print("Aucun canal sélectionné.")
-
-    # def envoyer_message(self):
-    #     self.conn = mysql.connector.connect(
-    #         host="localhost",
-    #         user="root",
-    #         password="root",
-    #         database="mydiscord"
-    #     )
-    #     self.cursor = self.conn.cursor()
-    #     msg = MessageManager
-    #     message = self.saisie_message.get()
-    #     author_id_query = "SELECT first_name FROM users WHERE email = %s"
-    #     self.cursor.execute(author_id_query, (self.email_utilisateur_actuel,))
-    #     author_id = self.cursor.fetchone()[0]  # Assuming it returns one row
-
-    #     print(message)
-    #     self.saisie_message.delete(0, tk.END)
-    #     insert_query = "INSERT INTO messages (author_id, content) VALUES (%s, %s)"
-    #     self.cursor.execute(insert_query, (author_id, message,))
-    #     self.conn.commit()
-    #     msg.rafraichir_messages()
-    #     self.bouton_envoyer_message.invoke()
-
-
-
-    # def envoyer_message(self):
-    #     self.conn = mysql.connector.connect(
-    #         host="localhost",
-    #         user="root",
-    #         password="root",
-    #         database="mydiscord"
-    #     )
-    #     self.cursor = self.conn.cursor()
-    #     msg = MessageManager
-    #     message = self.saisie_message.get()
-    #     author_id = (f"SELECT first_name FROM users WHERE email = %s", (self.email_utilisateur_actuel,))
-    #     print(message)
-    #     self.saisie_message.delete(0, tk.END)
-    #     self.cursor.execute("INSERT INTO messages (author_id, content) VALUES (%s, %s)", (author_id, message,))
-    #     self.conn.commit()
-    #     msg.rafraichir_messages()
-    #     self.bouton_envoyer_message
-
-    # def envoyer_message(self):
-    #     message = self.saisie_message.get()
-    #     print(message)
-    #     self.etiquette_liste_message
-
-    #     self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-    #     self.connexion.commit()
-
-
-    #     message = MessageManager()
-    #     message = self.saisie_message.get()
-    #     self.curseur.execute("INSERT INTO messages (content) VALUES (%s)", (message,))
-    #     self.connexion.commit()
+                # Afficher le message dans la liste des messages
+                message_text = f"{user_name}: {content}"
+                self.liste_message.insert(tk.END, message_text)
+        except mysql.connector.Error as err:
+            print("Erreur lors du chargement des messages du canal :", err)
 
         
     # Méthode pour vérifier l'identification de l'utilisateur
     def verifier_identification(self, email, mot_de_passe):
         try:
-            self.curseur.execute("SELECT id FROM users WHERE email = %s AND password = %s", (email, mot_de_passe))
+            self.curseur.execute("SELECT id FROM users WHERE email = %s AND password = %s", (email, mot_de_passe,))
             utilisateur = self.curseur.fetchone()
             if utilisateur:
+                print("Identification réussie.")
                 self.utilisateur_actuel = utilisateur[0]
                 self.email_utilisateur_actuel = email
-                print("Session ouverte pour l'utilisateur avec succès !")
+                self.etiquette_utilisateur["text"] = f"Utilistateur : {email}"
                 return True
             else:
                 print("Identifiants incorrects.")
@@ -363,14 +293,11 @@ class GestionnaireCanaux(tk.Tk):
             print("Erreur lors de la vérification de l'identification :", err)
             return False
 
-    
+    # Méthode pour déconnecter l'utilisateur
     def deconnexion_utilisateur(self):
-        # Vous pouvez ajouter ici toute logique de nettoyage ou de traitement de déconnexion nécessaire
-
-        # Par exemple, si vous avez une session ouverte, vous pouvez la fermer
         self.fermer_session()
 
-        # Vous pouvez également rediriger l'utilisateur vers une page de déconnexion ou une autre page d'accueil
+        # Rediriger l'utilisateur vers la page d'accueil
         self.rediriger_vers_page_accueil_apres_deconnexion()
 
     def fermer_session(self):
