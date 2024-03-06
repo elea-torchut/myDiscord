@@ -111,7 +111,7 @@ class MessageManager(tk.Tk):
 
     def envoyer_message(self):
         message = self.message_entry.get()
-        author_name = (f"SELECT first_name FROM users WHERE email = %s")
+        # author_name = (f"SELECT first_name FROM users WHERE email = %s")
         print(message)
         self.message_entry.delete(0, tk.END)
         self.cursor.execute(f"INSERT INTO messages (author_id, content) VALUES (1, '{message}')")
