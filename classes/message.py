@@ -55,21 +55,26 @@ class MessageManager(tk.Tk):
         self.return_button.pack(anchor=tk.NE)
 
     def rafraichir_messages(self):
-        # Efface tous les messages actuellement affichés
         self.message_listbox.delete(0, tk.END)
-
-        # Récupère une nouvelle liste de messages
         messages = self.recupere_messages()
-
-        # Insère chaque message dans message_listbox
         for user_name, content in messages:
             message_text = f"{user_name}: {content}"
             self.message_listbox.insert(tk.END, message_text)
 
 
     def recupere_messages(self):
-        self.cursor.execute("SELECT author_id, content FROM messages")
+        # Cette requête SQL joint les tables users et messages pour récupérer le prénom de l'utilisateur et le contenu de chaque message.
+        # Assurez-vous que 'self.nom_canal' est correctement défini et correspond au nom du canal actuel.
+        query = """
+            SELECT u.first_name, m.content
+            FROM messages m
+            INNER JOIN users u ON m.author_id = u.id
+            INNER JOIN channels c ON m.channel_id = c.id
+            WHERE c.name = %s
+        """
+        self.cursor.execute(query, (self.nom_canal,))
         return self.cursor.fetchall()
+
     
     def envoyer_message(self):
         message = self.message_entry.get().strip()
