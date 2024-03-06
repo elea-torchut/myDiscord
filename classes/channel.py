@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import PhotoImage
 import mysql.connector
 from message import MessageManager
 
@@ -29,8 +30,8 @@ class GestionnaireCanaux(tk.Tk):
         self.cadre_canal = tk.Frame(self)
         self.cadre_canal.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.cadre_message = tk.Frame(self)
-        self.cadre_message.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.cadre_droit = tk.Frame(self)
+        self.cadre_droit.pack(side=tk.RIGHT, fill=tk.Y)
 
         self.etiquette_liste_canal = tk.Label(self.cadre_canal, text="Liste des canaux")
         self.etiquette_liste_canal.pack()
@@ -38,47 +39,29 @@ class GestionnaireCanaux(tk.Tk):
         self.liste_canal = tk.Listbox(self.cadre_canal, width=30)
         self.liste_canal.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # self.bouton_actualiser = tk.Button(self.cadre_canal, text="Actualiser", command=self.rafraichir_canaux)
-        # self.bouton_actualiser.pack()
-
-        self.bouton_creer_canal = tk.Button(self.cadre_canal, text="Créer un canal", command=self.creer_fenetre_canal)
-        self.bouton_creer_canal.pack()
-
-        self.bouton_supprimer_canal = tk.Button(self.cadre_canal, text="Supprimer un canal", command=self.supprimer_canal)
-        self.bouton_supprimer_canal.pack()
-
-        self.bouton_modifier_canal = tk.Button(self.cadre_canal, text="Modifier un canal", command=self.modifier_canal)
-        self.bouton_modifier_canal.pack()
-
-        self.bouton_rejoindre_canal = tk.Button(self.cadre_canal, text="Rejoindre un canal", command=self.rejoindre_canal) 
-        self.bouton_rejoindre_canal.pack()
-
-        self.bouton_quitter_canal = tk.Button(self.cadre_canal, text="Quitter un canal", command=self.quitter_canal)
-        self.bouton_quitter_canal.pack()
-
-        self.bouton_actualiser_message = tk.Button(self.cadre_message, text="Actualiser les messages")
-        self.bouton_actualiser_message.pack()
-
-        self.etiquette_message = tk.Label(self.cadre_message, text="Message")
-        self.etiquette_message.pack()
-
-        self.saisie_message = tk.Entry(self.cadre_message)
-        self.saisie_message.pack()
-        
-        self.bouton_envoyer_message = tk.Button(self.cadre_message, text="Envoyer un message", command=self.acceder_a_la_messagerie_du_canal)
-        self.bouton_envoyer_message.pack()
-
-        self.etiquette_liste_message = tk.Label(self.cadre_message, text="Messages du canal")
-        self.etiquette_liste_message.pack()
-
-        self.liste_message = tk.Listbox(self.cadre_message, width=50)
-        self.liste_message.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-        self.bouton_deconnexion = tk.Button(self.cadre_message, text="Se déconnecter", command=self.deconnexion_utilisateur)
-        self.bouton_deconnexion.pack()
+        # Création des boutons à l'extrême droite
+        self.creer_boutons(self.cadre_droit)
 
         # Chargement initial des canaux
         self.rafraichir_canaux()
+
+    def creer_boutons(self, cadre):
+        # Liste des tuples (texte du bouton, méthode associée)
+        actions = [
+            ("Actualiser", self.rafraichir_canaux),
+            ("Créer un canal", self.creer_fenetre_canal),
+            ("Supprimer un canal", self.supprimer_canal),
+            ("Modifier un canal", self.modifier_canal),
+            ("Rejoindre un canal", self.rejoindre_canal),
+            ("Quitter un canal", self.quitter_canal),
+            ("Rejoindre canal", self.acceder_a_la_messagerie_du_canal),
+            ("Se déconnecter", self.deconnexion_utilisateur)
+        ]
+
+        for texte, commande in actions:
+            bouton = tk.Button(cadre, text=texte, command=commande)
+            bouton.pack(fill=tk.X, pady=2)
+
 
     def rafraichir_canaux(self):
         # Efface la liste actuelle des canaux
