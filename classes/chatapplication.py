@@ -71,17 +71,15 @@ class ChatApplication(tk.Tk):
 
     # Méthode pour rediriger l'utilisateur vers la fenêtre de discussion
     def rediriger_vers_discussion(self):
-        email = self.entry_email.get()  # Récupérer l'email saisi par l'utilisateur
-        mot_de_passe = self.entry_mot_de_passe.get()  # Récupérer le mot de passe saisi par l'utilisateur
+        email = self.entry_email.get()
+        mot_de_passe = self.entry_mot_de_passe.get()
         self.destroy()  # Fermer la fenêtre actuelle
-
-        # Création d'une instance de la classe GestionnaireCanaux
-        channel = GestionnaireCanaux()
+        channel = GestionnaireCanaux(email)  # Modifiez cette ligne
         if channel.verifier_identification(email, mot_de_passe):
             channel.mainloop()
         else:
             print("Adresse email ou mot de passe invalide")
-            
+
             
     def connexion_utilisateur(self):
         email = self.entry_email.get()  # Récupérer l'adresse email saisie par l'utilisateur

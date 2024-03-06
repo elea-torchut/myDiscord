@@ -3,10 +3,12 @@ import mysql.connector
 
 
 class MessageManager(tk.Tk):
-    def __init__(self):
+    def __init__(self, user_email, nom_canal):
         super().__init__()
         self.title("Gestion des messages Discord")
         self.geometry("800x600")
+        self.user_email = user_email
+        self.nom_canal = nom_canal
 
         # Connexion à la base de données MySQL
         self.conn = mysql.connector.connect(
@@ -18,6 +20,17 @@ class MessageManager(tk.Tk):
         self.cursor = self.conn.cursor()
         
         # Interface utilisateur pour les messages
+
+        self.message_frame = tk.Frame(self)
+        self.message_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        self.canal_label = tk.Label(self.message_frame, text=f"Canal: {self.nom_canal}")
+        self.canal_label.pack()
+
+
+        self.canal_label = tk.Label(self.message_frame, text=f"Canal: {self.nom_canal}")
+        self.canal_label.pack() 
+        
         self.message_frame = tk.Frame(self)
         self.message_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         
@@ -59,65 +72,24 @@ class MessageManager(tk.Tk):
         return self.cursor.fetchall()
     
     def envoyer_message(self):
-        try:
-            # Connexion à la base de données MySQL
-            conn = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                password="root",
-                database="mydiscord"
-            )
-            cursor = conn.cursor()
+        message = self.message_entry.get().strip()
+        if message:  # Assurez-vous que le message n'est pas vide
+            try:
+                # Utilisez self.conn et self.cursor pour utiliser la connexion existante
+                self.cursor.execute("SELECT id FROM users WHERE email = %s", (self.user_email,))
+                author_id = self.cursor.fetchone()[0]
 
-            # Récupération de l'ID de l'auteur du message
-            author_id_query = "SELECT id FROM users WHERE email = %s"
-            cursor.execute(author_id_query, (self.email_utilisateur_actuel,))
-            author_id = cursor.fetchone()[0]
-            
-            # Récupération du nom de l'utilisateur actuel
-            user_name_query = "SELECT first_name FROM users WHERE email = %s"
-            cursor.execute(user_name_query, (self.email_utilisateur_actuel,))
-            user_name = cursor.fetchone()[0]
-            print(user_name)
-            
+                self.cursor.execute("SELECT id FROM channels WHERE name = %s", (self.nom_canal,))
+                channel_id = self.cursor.fetchone()[0]
 
-            # Récupération de l'ID du canal actuel
-            channel_id_query = "SELECT id FROM channels WHERE name = %s"
-            cursor.execute(channel_id_query, (self.nom_canal_actuel,))
-            channel_id = cursor.fetchone()[0]
+                self.cursor.execute("INSERT INTO messages (author_id, channel_id, content) VALUES (%s, %s, %s)", (author_id, channel_id, message))
+                self.conn.commit()
 
-            # Récupération du message depuis l'entrée utilisateur
-            message = self.message_entry.get()
+                self.rafraichir_messages()
+                self.message_entry.delete(0, tk.END)
+            except mysql.connector.Error as err:
+                print("Erreur lors de l'envoi du message :", err)
 
-            # Insertion du message dans la base de données
-            insert_query = "INSERT INTO messages (author_id, channel_id, content) VALUES (%s, %s, %s)"
-            cursor.execute(insert_query, (author_id, channel_id, message))
-            conn.commit()
-
-            # Rafraîchissement des messages dans le gestionnaire de messages
-            self.rafraichir_messages()
-
-            # Nettoyage de l'entrée utilisateur après l'envoi
-            self.message_entry.delete(0, tk.END)
-
-        except mysql.connector.Error as err:
-            print("Erreur lors de l'envoi du message :", err)
-
-        finally:
-            # Fermeture du curseur et de la connexion à la base de données
-            cursor.close()
-            conn.close()
-
-
-    def envoyer_message(self):
-        message = self.message_entry.get()
-        # author_name = (f"SELECT first_name FROM users WHERE email = %s")
-        print(message)
-        self.message_entry.delete(0, tk.END)
-        self.cursor.execute(f"INSERT INTO messages (author_id, content) VALUES (1, '{message}')")
-        self.conn.commit()
-        self.rafraichir_messages()
-        self.send_button
 
 
 if __name__ == "__main__":

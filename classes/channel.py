@@ -4,12 +4,13 @@ import mysql.connector
 from message import MessageManager
 
 class GestionnaireCanaux(tk.Tk):
-    def __init__(self):
+    def __init__(self,email_utilisateur_actuel=None):
         super().__init__()
         self.title("Gestion des canaux Discord")
         self.geometry("800x600")
         self.utilisateur_actuel = None
-        self.email_utilisateur_actuel = None
+        self.email_utilisateur_actuel = email_utilisateur_actuel
+
 
         # Connexion à la base de données MySQL
         self.connexion = mysql.connector.connect(
@@ -214,30 +215,19 @@ class GestionnaireCanaux(tk.Tk):
             # Récupérer le nom du canal sélectionné dans la liste
             nom_canal = self.liste_canal.get(tk.ACTIVE)
 
-            # Vérifier si un canal est sélectionné
+            # Vérifiez si un canal est sélectionné
             if nom_canal:
-                # Créer une nouvelle instance de la classe MessageManager
-                fenetre_messages = MessageManager()
+                # Créez une nouvelle instance de MessageManager en passant l'email utilisateur et le nom du canal
+                fenetre_messages = MessageManager(self.email_utilisateur_actuel, nom_canal)
 
-                # Récupérer l'identifiant du canal à partir de son nom
-                self.curseur.execute("SELECT id FROM channels WHERE name = %s", (nom_canal,))
-                canal_id = self.curseur.fetchone()[0]
-
-                # Passer l'identifiant du canal à la fenêtre de gestion des messages
-                fenetre_messages.charger_messages_du_canal(canal_id)    
-
-                # Passer l'identifiant de l'utilisateur actuel à la fenêtre de gestion des messages
-                fenetre_messages.utilisateur_actuel = self.utilisateur_actuel
-
-                # Passer l'adresse e-mail de l'utilisateur actuel à la fenêtre de gestion des messages
-                fenetre_messages.email_utilisateur_actuel = self.email_utilisateur_actuel
-
-                # Afficher la fenêtre de gestion des messages
+                # Plus de code pour afficher la fenêtre des messages
                 fenetre_messages.mainloop()
             else:
                 print("Aucun canal sélectionné.")
-        except mysql.connector.Error as err:
-            print("Erreur lors de l'accès à la messagerie du canal :", err)
+        except Exception as e:  # Utilisez Exception as e pour plus de généralité
+            print(f"Erreur lors de l'accès à la messagerie du canal: {e}")
+
+
 
     def charger_messages_du_canal(self, canal_id):
         try:
